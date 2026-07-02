@@ -3,612 +3,716 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEP &amp; Safety Vault — Equipment Reference</title>
+<title>MEP & Safety Vault — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --amber:#ffb020; --amber-dark:#e0961a; --red:#e8483a; --green:#3ecf8e;
-  --radius:14px; --radius-sm:8px;
-  --stripe: repeating-linear-gradient(45deg,#151515 0 14px,var(--amber) 14px 28px);
-}
-html[data-theme="dark"]{
-  --bg:#12151a; --surface:#1a1e25; --surface-2:#20252d; --text:#e8eaed; --muted:#8b93a3; --border:#2a2f38;
-  --shadow: 0 10px 30px rgba(0,0,0,.45);
-}
-html[data-theme="light"]{
-  --bg:#f0f1ec; --surface:#ffffff; --surface-2:#f7f7f4; --text:#1b1e24; --muted:#5c6370; --border:#dfe1db;
-  --shadow: 0 10px 30px rgba(20,20,10,.08);
-}
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
-  transition:background .3s ease,color .3s ease; min-height:100vh;
-}
-h1,h2,h3,.disp{font-family:'Oswald',sans-serif; letter-spacing:.02em;}
+:root{--amber:#ffb020;--amber-dark:#e0961a;--red:#e8483a;--green:#3ecf8e;--orange:#f0883e;--radius:14px;--radius-sm:8px;--sidebar-w:252px;--stripe:repeating-linear-gradient(45deg,#151515 0 14px,var(--amber) 14px 28px);}
+html[data-theme="dark"]{--bg:#0d1117;--surface:#161b22;--surface-2:#1c2333;--surface-3:#22293a;--text:#e6edf3;--muted:#7d8590;--border:#2d333b;--shadow:0 8px 32px rgba(0,0,0,.5);--hover:0 0 0 1px var(--amber),0 8px 30px rgba(255,176,32,.08);}
+html[data-theme="light"]{--bg:#f0f2f5;--surface:#ffffff;--surface-2:#f6f8fa;--surface-3:#eaeef2;--text:#1f2328;--muted:#656d76;--border:#d0d7de;--shadow:0 8px 32px rgba(20,20,10,.08);--hover:0 0 0 1px var(--amber),0 8px 30px rgba(255,176,32,.12);}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;transition:background .3s,color .3s;overflow:hidden;}
+h1,h2,h3,h4,.disp{font-family:'Oswald',sans-serif;letter-spacing:.02em;}
 .mono{font-family:'JetBrains Mono',monospace;}
-a{color:inherit;}
-button{font-family:inherit; cursor:pointer;}
-::selection{background:var(--amber); color:#151515;}
- 
-.stripe-bar{height:5px; background:var(--stripe); background-size:40px 40px;}
- 
-.topbar{
-  position:sticky; top:0; z-index:40; background:var(--surface);
-  border-bottom:1px solid var(--border); backdrop-filter:blur(8px);
-}
-.topbar-inner{
-  max-width:1400px; margin:0 auto; padding:16px 24px; display:flex; align-items:center;
-  gap:20px; flex-wrap:wrap; justify-content:space-between;
-}
-.brand{display:flex; align-items:center; gap:14px;}
-.brand-mark{
-  width:46px; height:46px; border-radius:10px; display:flex; align-items:center; justify-content:center;
-  background:var(--stripe); background-size:26px 26px; font-size:20px; flex:none;
-  box-shadow:var(--shadow);
-}
-.brand h1{font-size:22px; margin:0; text-transform:uppercase; font-weight:700;}
-.brand p{margin:2px 0 0; font-size:12.5px; color:var(--muted);}
- 
-.controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+::selection{background:var(--amber);color:#151515;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+.bg-layer{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-dots{background-image:radial-gradient(circle at 1px 1px,var(--border) .5px,transparent 0);background-size:28px 28px;opacity:.3;}
+.bg-glow{background:radial-gradient(ellipse at 15% 30%,rgba(255,176,32,.04) 0%,transparent 50%),radial-gradient(ellipse at 85% 70%,rgba(62,207,142,.03) 0%,transparent 50%);animation:bgF 25s ease-in-out infinite alternate;}
+@keyframes bgF{to{transform:scale(1.08) translate(-3%,4%);}}
+
+.gradient-bar{height:3px;background:linear-gradient(90deg,var(--amber),var(--red),var(--amber),var(--green),var(--amber));background-size:300% 100%;animation:grS 4s linear infinite;position:relative;z-index:70;}
+@keyframes grS{to{background-position:300% 50%;}}
+
+/* Sidebar */
+.sidebar{position:fixed;top:3px;left:0;bottom:0;width:var(--sidebar-w);z-index:60;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:transform .3s ease;}
+.sidebar-head{padding:16px 14px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.brand-mark{width:38px;height:38px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--stripe);background-size:22px 22px;font-size:16px;animation:strA 3s linear infinite;box-shadow:var(--shadow);}
+@keyframes strA{to{background-position:22px 22px;}}
+.brand-text h1{font-size:15px;text-transform:uppercase;font-weight:700;line-height:1.15;}
+.brand-text span{font-size:9.5px;color:var(--muted);font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+.sidebar-nav{flex:1;overflow-y:auto;padding:8px 7px;}
+.nav-section{margin-top:12px;}
+.nav-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 9px 6px;opacity:.55;}
+.nav-item{width:100%;display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;transition:all .15s;position:relative;text-align:left;}
+.nav-item:hover{background:var(--surface-2);}
+.nav-item.active{background:rgba(255,176,32,.1);color:var(--amber);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;border-radius:0 3px 3px 0;background:var(--amber);}
+.nav-ico{font-size:14px;width:18px;text-align:center;flex:none;}
+.nav-badge{margin-left:auto;font-size:9.5px;font-weight:700;background:var(--surface-3);padding:2px 6px;border-radius:99px;color:var(--muted);min-width:20px;text-align:center;}
+.nav-item.active .nav-badge{background:rgba(255,176,32,.15);color:var(--amber);}
+.cat-dot-sm{width:7px;height:7px;border-radius:50%;flex:none;}
+.nav-alert{width:6px;height:6px;border-radius:50%;background:var(--red);flex:none;margin-left:3px;animation:pls 2s ease infinite;}
+@keyframes pls{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+.sidebar-foot{padding:10px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.role-toggle{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--muted);}
+.role-switch{position:relative;width:42px;height:22px;border-radius:11px;background:var(--surface-3);border:1px solid var(--border);cursor:pointer;transition:all .2s;flex:none;}
+.role-switch .knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:all .2s;}
+.role-switch.admin{background:rgba(255,176,32,.2);border-color:var(--amber);}
+.role-switch.admin .knob{left:22px;background:var(--amber);}
+.role-label{min-width:40px;}
+.foot-row{display:flex;align-items:center;justify-content:space-between;}
+.theme-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;flex:none;}
+.theme-btn:hover{transform:rotate(20deg);background:var(--amber);color:#151515;border-color:var(--amber);}
+.ver{font-size:9.5px;color:var(--muted);font-weight:600;}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:55;backdrop-filter:blur(2px);}
+.sidebar-backdrop.show{display:block;}
+
+/* Main */
+.main-area{margin-left:var(--sidebar-w);height:calc(100vh - 3px);display:flex;flex-direction:column;position:relative;z-index:1;}
+.topbar{height:54px;flex:none;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:40;backdrop-filter:blur(8px);}
+.menu-toggle{display:none;width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);font-size:16px;align-items:center;justify-content:center;flex:none;}
+.page-title{font-family:'Oswald',sans-serif;font-size:17px;font-weight:600;text-transform:uppercase;flex:none;}
+.topbar-spacer{flex:1;}
+.role-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:4px 10px;border-radius:99px;flex:none;}
+.role-badge.admin{background:rgba(255,176,32,.12);color:var(--amber);}
+.role-badge.employee{background:rgba(62,207,142,.12);color:var(--green);}
+.room-filter-tag{display:none;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:rgba(255,176,32,.1);color:var(--amber);font-size:11px;font-weight:600;}
+.room-filter-tag.show{display:flex;}
+.room-filter-tag button{font-size:13px;line-height:1;opacity:.7;transition:opacity .15s;}
+.room-filter-tag button:hover{opacity:1;}
 .search-wrap{position:relative;}
-.search-wrap input{
-  width:260px; max-width:60vw; padding:10px 14px 10px 36px; border-radius:999px; border:1px solid var(--border);
-  background:var(--surface-2); color:var(--text); font-size:14px; outline:none; transition:border .2s;
-}
+.search-wrap input{width:240px;max-width:40vw;padding:7px 12px 7px 32px;border-radius:99px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:12.5px;outline:none;transition:border .2s;}
 .search-wrap input:focus{border-color:var(--amber);}
-.search-wrap .ic{position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px;}
-select#catSelect{
-  padding:10px 14px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2);
-  color:var(--text); font-size:13.5px; outline:none;
-}
-.theme-btn{
-  width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--surface-2);
-  color:var(--text); font-size:17px; display:flex; align-items:center; justify-content:center;
-  transition:transform .25s ease, background .2s;
-}
-.theme-btn:hover{transform:rotate(20deg); background:var(--amber); color:#151515; border-color:var(--amber);}
- 
-.chips-wrap{
-  max-width:1400px; margin:0 auto; padding:14px 24px 0; display:flex; gap:8px; overflow-x:auto;
-  scrollbar-width:thin;
-}
-.chip{
-  flex:none; padding:8px 16px; border-radius:999px; border:1px solid var(--border); background:var(--surface);
-  color:var(--muted); font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.03em;
-  white-space:nowrap; transition:all .2s;
-}
-.chip:hover{border-color:var(--amber); color:var(--text);}
-.chip.active{background:var(--amber); color:#151515; border-color:var(--amber);}
- 
-main{max-width:1400px; margin:0 auto; padding:22px 24px 60px;}
-.stats{color:var(--muted); font-size:13px; margin-bottom:16px;}
-.stats b{color:var(--text);}
- 
-.grid{
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:18px;
-}
-.card{
-  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;
-  display:flex; flex-direction:column; opacity:0; transform:translateY(16px);
-  animation:rise .5s ease forwards;
-  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-}
-.card:hover{transform:translateY(-6px); box-shadow:var(--shadow); border-color:var(--amber);}
-@keyframes rise{to{opacity:1; transform:translateY(0);}}
- 
-.thumb{
-  height:130px; position:relative; display:flex; align-items:center; justify-content:center;
-  font-size:44px; color:#fff;
-}
-.thumb::after{
-  content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.35) 100%);
-}
-.thumb .tag{
-  position:absolute; top:10px; left:10px; z-index:2; font-size:10px; font-weight:700; text-transform:uppercase;
-  letter-spacing:.04em; background:rgba(0,0,0,.5); color:#fff; padding:4px 9px; border-radius:999px;
-  backdrop-filter:blur(3px);
-}
-.thumb .ico{position:relative; z-index:1;}
- 
-.card-body{padding:16px 16px 14px; display:flex; flex-direction:column; gap:8px; flex:1;}
-.card-body h3{margin:0; font-size:17px; text-transform:uppercase; font-weight:600;}
-.cat-line{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; font-weight:600;}
-.cat-dot{width:7px; height:7px; border-radius:50%; background:var(--amber); flex:none;}
-.desc{
-  font-size:13px; color:var(--muted); line-height:1.5; margin:0;
-  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
-}
-.spec-line{font-size:11.5px; color:var(--text); background:var(--surface-2); border:1px solid var(--border); border-radius:6px; padding:6px 9px; line-height:1.4;}
- 
-.card-actions{display:flex; gap:8px; margin-top:auto; padding-top:6px;}
-.btn{
-  flex:1; padding:10px 10px; border-radius:999px; border:1px solid var(--border); background:transparent;
-  color:var(--text); font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
-  display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s; text-decoration:none;
-}
-.btn-primary{background:var(--amber); border-color:var(--amber); color:#151515;}
+.search-wrap .ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;}
+.content{flex:1;overflow-y:auto;padding:20px;scroll-behavior:smooth;}
+.view{display:none;animation:fadeUp .4s ease forwards;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* Dashboard */
+.dash-greeting{margin-bottom:20px;}
+.dash-greeting h2{font-size:22px;font-weight:700;text-transform:uppercase;margin-bottom:2px;}
+.dash-greeting p{color:var(--muted);font-size:12.5px;}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;}
+.stat-card.s1::before{background:var(--amber);}.stat-card.s2::before{background:var(--orange);}.stat-card.s3::before{background:var(--green);}.stat-card.s4::before{background:var(--red);}
+.stat-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:10px;}
+.s1 .stat-icon{background:rgba(255,176,32,.1);}.s2 .stat-icon{background:rgba(240,136,62,.1);}.s3 .stat-icon{background:rgba(62,207,142,.1);}.s4 .stat-icon{background:rgba(232,72,58,.1);}
+.stat-num{font-family:'Oswald',sans-serif;font-size:30px;font-weight:700;line-height:1;margin-bottom:2px;}
+.stat-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+.stat-sub{font-size:10.5px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:4px;}
+.stat-sub .up{color:var(--green);}.stat-sub .dn{color:var(--red);}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.quick-btn{padding:14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;gap:6px;transition:all .2s;position:relative;overflow:hidden;text-align:left;}
+.quick-btn::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:0 4px 4px 0;}
+.quick-btn:nth-child(1)::before{background:var(--amber);}.quick-btn:nth-child(2)::before{background:var(--green);}.quick-btn:nth-child(3)::before{background:var(--orange);}.quick-btn:nth-child(4)::before{background:#c084fc;}
+.quick-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--amber);}
+.quick-btn:active{transform:translateY(0) scale(.97);}
+.quick-btn-ico{font-size:20px;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.quick-btn:nth-child(1) .quick-btn-ico{background:rgba(255,176,32,.1);}.quick-btn:nth-child(2) .quick-btn-ico{background:rgba(62,207,142,.1);}.quick-btn:nth-child(3) .quick-btn-ico{background:rgba(240,136,62,.1);}.quick-btn:nth-child(4) .quick-btn-ico{background:rgba(192,132,252,.1);}
+.quick-btn-title{font-size:12px;font-weight:700;text-transform:uppercase;}
+.quick-btn-desc{font-size:10.5px;color:var(--muted);line-height:1.35;}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;overflow:hidden;}
+.dash-card-title{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.dash-card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);}
+.chart-area{display:flex;align-items:center;gap:18px;}
+.chart-canvas-wrap{flex:none;width:150px;height:150px;position:relative;}
+.chart-canvas-wrap canvas{width:100%;height:100%;}
+.chart-legend{flex:1;display:flex;flex-direction:column;gap:5px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11.5px;}
+.legend-dot{width:8px;height:8px;border-radius:3px;flex:none;}
+.legend-name{flex:1;color:var(--muted);}
+.legend-val{font-weight:700;font-family:'Oswald',sans-serif;font-size:12px;}
+.cat-quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.cat-quick{padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:3px;}
+.cat-quick:hover{border-color:var(--amber);background:rgba(255,176,32,.04);transform:translateY(-1px);}
+.cat-quick-top{display:flex;align-items:center;justify-content:space-between;}
+.cat-quick-name{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;margin-right:5px;}
+.cat-quick-count{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;}
+.cat-quick-bar{height:3px;border-radius:2px;background:var(--surface-3);overflow:hidden;}
+.cat-quick-fill{height:100%;border-radius:2px;transition:width .8s ease;}
+.due-list{display:flex;flex-direction:column;gap:6px;}
+.due-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);cursor:pointer;transition:all .15s;}
+.due-item:hover{border-color:var(--amber);background:rgba(255,176,32,.03);}
+.due-ico{font-size:16px;flex:none;}
+.due-info{flex:1;min-width:0;}
+.due-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.due-cat{font-size:10px;color:var(--muted);}
+.status-badge{flex:none;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:2px 6px;border-radius:99px;white-space:nowrap;}
+.status-badge.active{background:rgba(62,207,142,.12);color:var(--green);}
+.status-badge.warning{background:rgba(240,136,62,.12);color:var(--orange);animation:pls 2s ease infinite;}
+.status-badge.danger{background:rgba(232,72,58,.12);color:var(--red);animation:pls 1.5s ease infinite;}
+.tips-list{display:flex;flex-direction:column;gap:8px;}
+.tip-item{display:flex;gap:8px;font-size:12px;line-height:1.45;color:var(--muted);}
+.tip-num{flex:none;width:20px;height:20px;border-radius:50%;background:rgba(255,176,32,.1);color:var(--amber);font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* Rooms */
+.rooms-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.room-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .25s;opacity:0;animation:fadeUp .45s ease forwards;position:relative;}
+.room-card:hover{box-shadow:0 0 0 1px var(--rc,var(--amber)),0 8px 30px rgba(0,0,0,.2);transform:translateY(-3px);}
+.room-card-head{padding:16px 16px 12px;display:flex;gap:12px;align-items:flex-start;}
+.room-ico{width:44px;height:44px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;background:linear-gradient(135deg,var(--rc,#ffb020),#151515);}
+.room-card-head h3{font-size:15px;text-transform:uppercase;font-weight:600;line-height:1.2;}
+.room-card-head p{font-size:11px;color:var(--muted);line-height:1.35;margin-top:2px;}
+.room-count-badge{margin-left:auto;font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--rc,var(--amber));flex:none;}
+.room-add-btn{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:8px;background:rgba(255,176,32,.15);color:var(--amber);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s;z-index:3;border:1px solid rgba(255,176,32,.2);}
+.room-add-btn:hover{background:var(--amber);color:#151515;transform:scale(1.1);}
+.room-icons{padding:0 16px;display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:40px;align-items:center;}
+.room-icon-tile{width:34px;height:34px;border-radius:7px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;cursor:pointer;position:relative;}
+.room-icon-tile:hover{border-color:var(--amber);transform:scale(1.1);}
+.room-icon-tile .remove-x{display:none;position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:var(--red);color:#fff;font-size:8px;font-weight:700;align-items:center;justify-content:center;border:1px solid var(--surface);}
+.room-icon-tile:hover .remove-x{display:flex;}
+.room-empty-msg{font-size:10.5px;color:var(--muted);font-style:italic;}
+.room-more{width:34px;height:34px;border-radius:7px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--muted);}
+.room-status-bar{margin:0 16px;height:4px;border-radius:2px;background:var(--surface-3);overflow:hidden;display:flex;}
+.room-status-bar>div{height:100%;transition:width .8s ease;}
+.room-foot{padding:10px 16px 14px;display:flex;align-items:center;justify-content:space-between;}
+.room-status-text{font-size:10.5px;color:var(--muted);display:flex;gap:7px;flex-wrap:wrap;}
+.room-status-text span{display:flex;align-items:center;gap:3px;}
+.room-status-text .sd{width:5px;height:5px;border-radius:50%;}
+.btn-sm{padding:6px 12px;border-radius:99px;border:1px solid var(--amber);background:transparent;color:var(--amber);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;transition:all .15s;display:flex;align-items:center;gap:3px;}
+.btn-sm:hover{background:var(--amber);color:#151515;}
+
+/* Equipment grid */
+.chips-wrap{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
+.chips-wrap::-webkit-scrollbar{display:none;}
+.chip{flex:none;padding:5px 11px;border-radius:99px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;transition:all .2s;}
+.chip:hover{border-color:var(--amber);color:var(--text);}
+.chip.active{background:var(--amber);color:#151515;border-color:var(--amber);}
+.eq-stats{color:var(--muted);font-size:12px;margin-bottom:10px;}
+.eq-stats b{color:var(--text);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;opacity:0;transform:translateY(10px);animation:cIn .4s ease forwards;transition:transform .2s,box-shadow .2s,border-color .2s;}
+.card:hover{transform:translateY(-3px);box-shadow:var(--hover);}
+@keyframes cIn{to{opacity:1;transform:translateY(0);}}
+.thumb{height:100px;position:relative;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;}
+.thumb::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.35) 100%);}
+.thumb .tag{position:absolute;top:6px;left:6px;z-index:2;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:rgba(0,0,0,.5);color:#fff;padding:2px 6px;border-radius:99px;backdrop-filter:blur(3px);}
+.thumb .status-tag{position:absolute;top:6px;right:6px;z-index:2;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;padding:2px 6px;border-radius:99px;backdrop-filter:blur(3px);}
+.thumb .ico{position:relative;z-index:1;}
+.card-body{padding:11px 11px 10px;display:flex;flex-direction:column;gap:4px;flex:1;}
+.card-body h3{font-size:14px;text-transform:uppercase;font-weight:600;}
+.cat-line{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;font-weight:600;}
+.cat-dot{width:5px;height:5px;border-radius:50%;flex:none;}
+.desc{font-size:11.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.spec-line{font-size:10px;color:var(--text);background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:4px 6px;line-height:1.3;}
+.card-actions{display:flex;gap:5px;margin-top:auto;padding-top:3px;}
+.btn{flex:1;padding:7px 6px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:3px;transition:all .15s;}
+.btn:active{transform:scale(.96);}
+.btn-primary{background:var(--amber);border-color:var(--amber);color:#151515;}
 .btn-primary:hover{background:var(--amber-dark);}
-.btn-yt{border-color:var(--red); color:var(--red);}
-.btn-yt:hover{background:var(--red); color:#fff;}
- 
-/* modal */
-.overlay{
-  position:fixed; inset:0; background:rgba(5,6,8,.7); backdrop-filter:blur(4px); z-index:100;
-  display:flex; align-items:flex-start; justify-content:center; padding:40px 16px;
-  opacity:0; pointer-events:none; transition:opacity .25s ease;
-  overflow-y:auto;
-}
-.overlay.open{opacity:1; pointer-events:auto;}
-.modal{
-  background:var(--surface); border:1px solid var(--border); border-radius:16px; width:100%; max-width:720px;
-  transform:translateY(30px) scale(.97); transition:transform .3s ease; box-shadow:var(--shadow); margin:auto 0;
-}
+.btn-yt{border-color:var(--red);color:var(--red);}
+.btn-yt:hover{background:var(--red);color:#fff;}
+.empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted);}
+.empty .e-ico{font-size:30px;display:block;margin-bottom:5px;}
+
+/* Picker overlay */
+.picker-overlay{position:fixed;inset:0;background:rgba(5,6,8,.75);backdrop-filter:blur(6px);z-index:110;display:flex;align-items:stretch;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .25s;}
+.picker-overlay.open{opacity:1;pointer-events:auto;}
+.picker-panel{width:520px;max-width:95vw;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;overflow:hidden;}
+.picker-overlay.open .picker-panel{transform:translateX(0);}
+.picker-head{padding:18px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.picker-head h3{font-size:17px;text-transform:uppercase;flex:1;}
+.picker-close{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;flex:none;}
+.picker-close:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.picker-search{padding:10px 18px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.picker-search input{width:100%;padding:8px 12px 8px 32px;border-radius:99px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:12.5px;outline:none;transition:border .2s;position:relative;}
+.picker-search input:focus{border-color:var(--amber);}
+.picker-search{position:relative;}
+.picker-search .ic{position:absolute;left:30px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:12px;z-index:1;}
+.picker-chips{padding:8px 18px 0;display:flex;gap:5px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.picker-chips::-webkit-scrollbar{display:none;}
+.picker-count{padding:8px 18px;font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.picker-count b{color:var(--text);}
+.picker-list{flex:1;overflow-y:auto;padding:6px 18px 18px;display:flex;flex-direction:column;gap:6px;}
+.picker-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface-2);transition:all .15s;cursor:pointer;}
+.picker-item:hover{border-color:var(--amber);background:rgba(255,176,32,.04);}
+.picker-item.added{border-color:var(--green);background:rgba(62,207,142,.06);}
+.picker-item-ico{font-size:22px;flex:none;width:32px;text-align:center;}
+.picker-item-info{flex:1;min-width:0;}
+.picker-item-name{font-size:13px;font-weight:600;}
+.picker-item-cat{font-size:10px;color:var(--muted);}
+.picker-item-btn{padding:6px 14px;border-radius:99px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;transition:all .15s;flex:none;white-space:nowrap;}
+.picker-item-btn.add{background:var(--amber);color:#151515;border:1px solid var(--amber);}
+.picker-item-btn.add:hover{background:var(--amber-dark);}
+.picker-item-btn.remove{background:transparent;color:var(--red);border:1px solid var(--red);}
+.picker-item-btn.remove:hover{background:var(--red);color:#fff;}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(5,6,8,.7);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;opacity:0;pointer-events:none;transition:opacity .25s;overflow-y:auto;}
+.overlay.open{opacity:1;pointer-events:auto;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:680px;transform:translateY(30px) scale(.97);transition:transform .3s;box-shadow:var(--shadow);margin:auto 0;}
 .overlay.open .modal{transform:translateY(0) scale(1);}
-.modal-top{height:6px; background:var(--stripe); background-size:30px 30px; border-radius:16px 16px 0 0;}
-.modal-head{padding:22px 24px 14px; display:flex; gap:16px; align-items:flex-start; border-bottom:1px solid var(--border);}
-.modal-ico{
-  width:58px; height:58px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center;
-  font-size:28px; color:#fff;
-}
-.modal-head h2{margin:0 0 4px; font-size:22px; text-transform:uppercase;}
-.modal-head .cat-line{margin:0;}
-.close-btn{
-  margin-left:auto; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:var(--surface-2);
-  color:var(--text); font-size:16px; flex:none; display:flex; align-items:center; justify-content:center;
-}
-.close-btn:hover{background:var(--red); color:#fff; border-color:var(--red);}
-.modal-body{padding:6px 24px 24px; display:flex; flex-direction:column; gap:18px;}
-.sec-label{
-  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--amber); margin:0 0 6px;
-}
-.sec-text{font-size:14px; line-height:1.6; color:var(--text); margin:0;}
-.spec-box{font-size:13px; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; line-height:1.6;}
-.ul-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px;}
-.ul-list li{font-size:13.5px; line-height:1.5; display:flex; gap:8px; align-items:flex-start;}
-.ul-list li::before{content:"✓"; color:var(--green); font-weight:700; flex:none; margin-top:1px;}
-.two-col{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
-.modal-foot{padding:6px 24px 24px; display:flex; gap:10px;}
-.modal-foot .btn{flex:none; padding:12px 22px;}
- 
-.to-top{
-  position:fixed; right:22px; bottom:22px; width:46px; height:46px; border-radius:50%; border:none;
-  background:var(--amber); color:#151515; font-size:18px; font-weight:700; box-shadow:var(--shadow);
-  opacity:0; pointer-events:none; transform:translateY(10px); transition:all .25s ease; z-index:50;
-}
-.to-top.show{opacity:1; pointer-events:auto; transform:translateY(0);}
-.to-top:hover{background:var(--amber-dark);}
- 
-footer{text-align:center; padding:26px 16px 40px; color:var(--muted); font-size:12.5px; border-top:1px solid var(--border);}
-.empty{grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted);}
-.empty .e-ico{font-size:38px; display:block; margin-bottom:10px;}
- 
-@media(max-width:640px){
-  .topbar-inner{flex-direction:column; align-items:stretch;}
-  .controls{justify-content:space-between;}
-  .search-wrap input{width:100%; max-width:none;}
-  .two-col{grid-template-columns:1fr;}
-  .modal-head{flex-wrap:wrap;}
-}
+.modal-top{height:5px;background:var(--stripe);background-size:28px 28px;border-radius:16px 16px 0 0;}
+.modal-head{padding:16px 18px 10px;display:flex;gap:12px;align-items:flex-start;border-bottom:1px solid var(--border);}
+.modal-ico{width:46px;height:46px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;}
+.modal-head h2{font-size:19px;text-transform:uppercase;}
+.modal-head .cat-line{margin-top:2px;}
+.close-btn{margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);font-size:13px;flex:none;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.close-btn:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.modal-body{padding:6px 18px 18px;display:flex;flex-direction:column;gap:12px;}
+.sec-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);margin-bottom:3px;}
+.sec-text{font-size:12.5px;line-height:1.5;}
+.spec-box{font-size:11.5px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;line-height:1.5;}
+.ul-list{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.ul-list li{font-size:12px;line-height:1.4;display:flex;gap:5px;align-items:flex-start;}
+.ul-list li::before{content:'✓';color:var(--green);font-weight:700;flex:none;margin-top:1px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-foot{padding:6px 18px 18px;display:flex;gap:8px;}
+.modal-foot .btn{flex:none;padding:9px 16px;}
+
+/* Toast */
+.toast-box{position:fixed;top:60px;right:16px;z-index:200;display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.toast{padding:10px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;display:flex;align-items:center;gap:7px;animation:tIn .3s ease;pointer-events:auto;max-width:300px;}
+.toast.out{animation:tOut .3s ease forwards;}
+@keyframes tIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
+@keyframes tOut{to{opacity:0;transform:translateX(40px);}}
+
+.to-top{position:fixed;right:16px;bottom:16px;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:15px;font-weight:700;box-shadow:var(--shadow);opacity:0;pointer-events:none;transform:translateY(10px);transition:all .25s;z-index:50;}
+.to-top.show{opacity:1;pointer-events:auto;transform:translateY(0);}
+.to-top:hover{background:var(--amber);color:#151515;border-color:var(--amber);}
+
+@media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr);}.quick-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.sidebar-backdrop.show{display:block;}.main-area{margin-left:0;}.menu-toggle{display:flex;}.search-wrap input{width:150px;}.dash-row{grid-template-columns:1fr;}.rooms-grid{grid-template-columns:1fr;}.two-col{grid-template-columns:1fr;}.modal-head{flex-wrap:wrap;}.content{padding:14px;}.picker-panel{width:100%;max-width:100%;}}
+@media(max-width:480px){.stat-grid{grid-template-columns:1fr 1fr;gap:8px;}.quick-grid{grid-template-columns:1fr;}.chart-area{flex-direction:column;align-items:center;}.search-wrap input{width:110px;}.room-card-head{flex-wrap:wrap;}.room-count-badge{margin-left:0;margin-top:4px;}}
 </style>
 </head>
 <body>
- 
-<header class="topbar">
-  <div class="stripe-bar"></div>
-  <div class="topbar-inner">
-    <div class="brand">
-      <div class="brand-mark">⚠️</div>
-      <div>
-        <h1>MEP &amp; Safety Vault</h1>
-        <p>Field reference for fire, electrical &amp; mechanical safety equipment</p>
-      </div>
+
+<div class="bg-layer bg-dots"></div>
+<div class="bg-layer bg-glow"></div>
+<div class="gradient-bar"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="brand-mark">⚠️</div>
+    <div class="brand-text"><h1>MEP & Safety</h1><span>Vault Dashboard</span></div>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav"></nav>
+  <div class="sidebar-foot">
+    <div class="role-toggle">
+      <span class="role-label" id="roleLabel">Employee</span>
+      <div class="role-switch" id="roleSwitch" onclick="toggleRole()"><div class="knob"></div></div>
     </div>
-    <div class="controls">
-      <div class="search-wrap">
-        <span class="ic">🔎</span>
-        <input type="text" id="searchInput" placeholder="Search equipment...">
-      </div>
-      <select id="catSelect"></select>
+    <div class="foot-row">
       <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+      <span class="ver">v3.1</span>
     </div>
   </div>
-  <div class="chips-wrap" id="chips"></div>
-</header>
- 
-<main>
-  <div class="stats" id="statsLine"></div>
-  <div class="grid" id="grid"></div>
-</main>
- 
-<footer>MEP &amp; Safety Vault — Reference tool for field inspection, training &amp; maintenance planning. Always follow site-specific SOPs and statutory requirements.</footer>
- 
-<div class="overlay" id="overlay">
-  <div class="modal" id="modal"></div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<div class="main-area">
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <div class="page-title" id="pageTitle">Dashboard</div>
+    <div class="topbar-spacer"></div>
+    <span class="role-badge employee" id="roleBadge">Employee</span>
+    <div class="room-filter-tag" id="roomFilterTag"></div>
+    <div class="search-wrap">
+      <span class="ic">🔎</span>
+      <input type="text" id="searchInput" placeholder="Search equipment...">
+    </div>
+  </header>
+  <div class="content" id="content">
+    <div class="view active" id="dashboardView"></div>
+    <div class="view" id="equipmentView"></div>
+    <div class="view" id="roomsView"></div>
+  </div>
 </div>
- 
+
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+<div class="picker-overlay" id="pickerOverlay">
+  <div class="picker-panel" id="pickerPanel"></div>
+</div>
+<div class="toast-box" id="toastBox"></div>
 <button class="to-top" id="toTop" title="Back to top">↑</button>
- 
+
 <script>
-/* ---------- Category content templates ---------- */
-const CATS = {
-  "Fire Fighting": {
-    color:"#e8483a",
-    desc:"{n} is a critical firefighting asset used to control and suppress fire outbreaks in MEP-served buildings, forming part of the active fire protection system installed as per local fire codes.",
-    purpose:"To provide immediate, accessible fire suppression capability that limits fire spread, protects occupants, and safeguards critical assets until the fire brigade arrives.",
-    working:"Operates by delivering a suppressing agent (water, foam, CO2 or dry chemical) at controlled pressure directly onto the fire source, cooling, smothering or interrupting the combustion chain reaction.",
-    apps:"Installed in fire hydrant systems, wet risers, plant rooms, corridors, basements and high-risk zones across commercial, industrial and residential buildings.",
-    check:["Verify pressure gauge reading is in the green operating zone","Check for physical damage, corrosion or leakage on body and hose","Confirm safety pin, seal and tag are intact with valid inspection date","Ensure unobstructed access and correct signage at mounting location"],
-    maint:["Conduct monthly visual inspection as per fire safety schedule","Perform annual servicing and hydrostatic pressure testing","Refill or recharge agent immediately after any use","Replace damaged hoses, nozzles or gauges without delay"],
-    safe:["Never use on live electrical equipment unless rated for it","Always operate in a well-ventilated area to avoid inhalation","Stand upwind of the fire while discharging the agent","Undergo hands-on training before attempting live operation"]
-  },
-  "Fire Detection & Alarm": {
-    color:"#ff7a3d",
-    desc:"{n} is an electronic life-safety device that continuously monitors the protected area and triggers an alarm signal the moment abnormal fire or gas conditions are sensed.",
-    purpose:"To provide early warning of fire, smoke, heat or gas hazards, giving occupants and response teams maximum time to evacuate and react.",
-    working:"Uses a sensing element (optical, ionization, thermistor or electrochemical) that continuously samples ambient conditions and signals the fire alarm control panel once a preset threshold is crossed.",
-    apps:"Installed in false ceilings, corridors, plant rooms, electrical rooms, kitchens and areas with fire or gas leak risk, networked to the central Fire Alarm Control Panel.",
-    check:["Test functional response using approved test gas or smoke","Check LED indicator and communication with control panel","Inspect for dust, paint or physical obstruction on sensor","Verify device address and zone mapping in the panel database"],
-    maint:["Clean sensing chamber as per manufacturer schedule","Conduct functional testing at defined periodic intervals","Calibrate sensitivity as per OEM and code requirements","Replace unit before end of rated service life"],
-    safe:["Never paint over or cover the detector housing","Do not disable a zone without proper permit and notification","Report any false alarm trend to the safety team immediately","Keep detectors clear of steam, dust and direct airflow sources"]
-  },
-  "Breathing & Rescue": {
-    color:"#3ea0e8",
-    desc:"{n} is a personal life-safety device used to provide breathable air, wound care or emergency escape capability in hazardous or oxygen-deficient environments.",
-    purpose:"To protect the respiratory system, treat injuries promptly, or enable safe evacuation and rescue work in hazardous atmospheres such as confined spaces or active fire zones.",
-    working:"Supplies clean breathable air from a compressed cylinder or filtration hood through a regulator and mask, or provides immediate first-response treatment materials, isolating or treating the affected person.",
-    apps:"Used in confined space entry, firefighting operations, chemical spill response, tank cleaning and as immediate emergency response equipment on site.",
-    check:["Check cylinder pressure gauge or kit contents are within range","Inspect mask seal, straps and hose, or kit box for damage","Verify alarm whistle or expiry dates are within validity","Confirm unit is within hydrostatic test or restock validity"],
-    maint:["Recharge, replace or restock consumables after every use","Sanitize components or wound care items after each use","Store in a clean, cool, dust-free designated location","Send for OEM servicing or restocking at prescribed intervals"],
-    safe:["Complete a fit-test or first-aid drill before real use","Never enter a hazardous atmosphere without a trained standby person","Monitor supply or condition continuously during use","Exit or seek medical help immediately once alarm or symptoms appear"]
-  },
-  "PPE": {
-    color:"#ffb020",
-    desc:"{n} is personal protective equipment worn by workers to reduce exposure to workplace hazards and comply with mandatory site safety requirements.",
-    purpose:"To protect the wearer from physical, chemical or environmental hazards encountered during routine and high-risk work activities.",
-    working:"Acts as a physical barrier or absorbing layer between the hazard and the wearer's body, reducing the transmitted force, exposure or contact of the hazard.",
-    apps:"Mandatory for use in construction sites, plant rooms, workshops, electrical work areas and any zone identified in the site risk assessment.",
-    check:["Inspect for cracks, tears, wear or deformation before use","Confirm certification label and expiry or manufacture date","Check straps, buckles or fasteners are fully functional","Ensure correct size and fit for the individual wearer"],
-    maint:["Clean and dry after each use as per manufacturer guidance","Store in a dedicated, contamination-free storage area","Replace immediately once damage or degradation is noticed","Retire and dispose of PPE at end of its rated life"],
-    safe:["Never use damaged or expired PPE on any job","Always combine with other controls, not as sole protection","Follow correct donning and doffing sequence every time","Report discomfort or fitting issues to the safety officer"]
-  },
-  "Work Permits & Docs": {
-    color:"#8b6de8",
-    desc:"The {n} is a formal, documented safety control used to authorize, plan and supervise higher-risk work activities before they begin on site.",
-    purpose:"To ensure hazards are identified, controls are implemented, and accountable persons formally authorize the work before it starts, reducing the risk of incidents.",
-    working:"Requires the requesting team to identify the task, hazards and controls, obtain sign-off from an authorized issuer, and close out the document once work is verified complete and safe.",
-    apps:"Used across construction, MEP and industrial sites for any activity classified as high-risk in the site permit-to-work and risk management procedure.",
-    check:["Confirm hazard identification and control measures are documented","Verify all required signatures and validity period are in place","Check that isolation, PPE and equipment requirements are met","Ensure the area is inspected and found safe before work starts"],
-    maint:["Review and update the document format as procedures change","File closed records per the document retention policy","Audit compliance through periodic site inspections","Retrain issuing authorities and users on procedure updates"],
-    safe:["Never start work without a valid, signed document in hand","Stop work immediately if site conditions change unexpectedly","Ensure every worker understands the controls before starting","Verify the area is safe before formally closing out"]
-  },
-  "HVAC & Mechanical": {
-    color:"#3ecf8e",
-    desc:"{n} is a mechanical MEP asset responsible for conditioning, moving or supporting air and thermal loads within the building's HVAC system.",
-    purpose:"To maintain the required indoor air quality, temperature and comfort conditions efficiently and reliably for building occupants and processes.",
-    working:"Circulates air or refrigerant through coils, fans, compressors and filters, exchanging heat and controlling temperature and humidity as per the design setpoints.",
-    apps:"Installed in plant rooms, ceiling voids, mechanical yards and central utility plants serving commercial, residential and industrial HVAC systems.",
-    check:["Check running current, vibration and abnormal noise levels","Inspect filters, coils and belts for dirt or wear","Verify control settings and sensor readings against setpoints","Confirm no refrigerant, water or oil leakage is present"],
-    maint:["Clean or replace filters as per the PM schedule","Lubricate bearings and check belt tension periodically","Carry out coil cleaning and condensate drain flushing","Perform annual OEM-recommended overhaul and testing"],
-    safe:["Lock out and tag out power before any internal inspection","Allow rotating parts to fully stop before servicing","Use proper PPE when handling refrigerant or hot surfaces","Never bypass safety interlocks or pressure switches"]
-  },
-  "Electrical Systems": {
-    color:"#f4c542",
-    desc:"{n} is a critical electrical distribution or power backup asset that ensures a safe, stable and continuous power supply to the facility.",
-    purpose:"To generate, convert, distribute or safeguard electrical power reliably while protecting downstream equipment and personnel from electrical hazards.",
-    working:"Manages electrical energy through switching, transformation, generation or storage components, maintaining voltage, frequency and load balance within safe design limits.",
-    apps:"Installed in electrical substations, switchrooms, plant rooms and main distribution boards serving critical and non-critical building loads.",
-    check:["Check for abnormal heating, noise or unusual odor","Verify indicator lamps, meters and alarms are functioning","Inspect cable terminations and busbar connections for tightness","Confirm earthing and protective relay settings are correct"],
-    maint:["Perform thermal scanning during scheduled PM rounds","Tighten and clean all electrical connections periodically","Test protective relays and breakers at defined intervals","Carry out insulation resistance testing as per schedule"],
-    safe:["Always follow lockout-tagout before any electrical work","Use insulated tools and PPE rated for the working voltage","Never work alone on live or high-voltage electrical equipment","Confirm de-energization with a calibrated voltage tester first"]
-  },
-  "Plumbing & Pumps": {
-    color:"#3daee8",
-    desc:"{n} is a mechanical fluid-handling asset within the plumbing and water management system, moving or treating water for the facility's needs.",
-    purpose:"To ensure reliable water supply, drainage or treatment, supporting domestic, flushing, irrigation or process water requirements of the building.",
-    working:"Uses a motor-driven impeller, or a treatment process train, to move, pressurize or clean water as it passes through the connected piping network.",
-    apps:"Installed in pump rooms, basements, terraces and utility yards supporting domestic water supply, drainage and effluent treatment systems.",
-    check:["Check discharge pressure and flow rate against design values","Inspect for leakage at seals, glands and pipe joints","Verify motor current draw and bearing temperature are normal","Confirm control panel alarms and float switches operate correctly"],
-    maint:["Grease bearings and check alignment as per PM schedule","Clean strainers, screens and suction lines periodically","Test standby and duty pump changeover operation monthly","Carry out annual overhaul as per OEM recommendations"],
-    safe:["Isolate power before opening or servicing any pump","Never operate a pump against a fully closed valve","Use PPE when handling treatment chemicals or effluent","Ensure proper earthing of the pump motor before energizing"]
-  },
-  "Valves & Fittings": {
-    color:"#b0b6bf",
-    desc:"{n} is a piping component used to control, direct or connect the flow of water or fluid within the building's fire fighting or plumbing network.",
-    purpose:"To regulate, isolate or connect fluid flow safely and reliably at the required points within the piping distribution system.",
-    working:"Operates by rotating, lifting or connecting an internal mechanism to open, close, restrict or join the flow path within the pipeline.",
-    apps:"Installed in fire fighting risers, plumbing distribution lines, pump rooms and hose connection points throughout the building network.",
-    check:["Check for external leakage at the body and joints","Verify smooth operation through full open and close travel","Inspect gasket, thread or coupling condition for wear","Confirm correct orientation and flow direction marking"],
-    maint:["Exercise the valve periodically to prevent seizing","Lubricate moving parts as per manufacturer guidance","Replace worn gaskets, seals or O-rings promptly","Repaint or protect exposed metal parts from corrosion"],
-    safe:["Depressurize the line before dismantling any fitting","Never force a stuck valve with excessive tool leverage","Wear hand protection when handling sharp-edged fittings","Tag isolated valves clearly during maintenance work"]
-  },
-  "Emergency Systems": {
-    color:"#ff6b6b",
-    desc:"{n} is a life-safety egress asset that activates automatically during a power failure or emergency to guide occupants safely out of the building.",
-    purpose:"To provide illumination and clear directional guidance along escape routes during a mains power failure or emergency evacuation.",
-    working:"Switches automatically from mains supply to an internal battery backup the instant power is lost, keeping the lamp or sign illuminated for the rated duration.",
-    apps:"Installed along corridors, stairwells, exits and assembly points as part of the building's mandatory emergency evacuation system.",
-    check:["Test battery changeover by simulating a power failure","Check illumination brightness and coverage of the area","Inspect housing, lens and mounting for damage","Verify battery backup duration meets code requirement"],
-    maint:["Conduct monthly function test and annual duration test","Replace battery at the end of its rated service life","Clean lens and housing to maintain light output","Log all test results in the fire safety register"],
-    safe:["Never obstruct or paint over exit signage","Report a non-functional unit for immediate repair","Keep the escape route beneath it clear at all times","Verify visibility from all angles along the route"]
-  },
-  "Instrumentation": {
-    color:"#c084fc",
-    desc:"{n} is a monitoring instrument used to measure and indicate a critical operating parameter within the fire fighting or MEP piping system.",
-    purpose:"To provide accurate, real-time indication of system conditions so operators can verify correct performance and detect abnormal conditions early.",
-    working:"Senses the physical parameter (pressure or flow) through a mechanical or electronic sensing element and displays or signals the reading to the operator or control panel.",
-    apps:"Installed on fire pump systems, risers, pump discharge lines and water distribution networks for continuous condition monitoring.",
-    check:["Verify reading against a known reference or calibrated gauge","Check for physical damage, fogging or a sticking needle","Inspect isolation cock and connecting tubing for leaks","Confirm signal output to the control panel is accurate"],
-    maint:["Calibrate at the manufacturer-recommended interval","Clean the dial face and connecting fittings periodically","Replace the unit if drift exceeds acceptable tolerance","Protect from vibration and pressure spikes where possible"],
-    safe:["Isolate the line before removing or servicing the instrument","Never exceed the rated pressure or range of the device","Handle glass-faced gauges carefully to avoid breakage","Report inaccurate readings for immediate replacement"]
-  }
-};
- 
-/* ---------- Equipment data: n=name, c=category, i=icon, s=spec ---------- */
-const DATA = [
-  {n:"Fire Extinguisher", c:"Fire Fighting", i:"🧯", s:"Capacity: 4–9 kg | Type: ABC / CO2 / Foam | Pressure: 15 bar | Range: 3–4 m"},
-  {n:"Fire Hose Reel", c:"Fire Fighting", i:"🚿", s:"Hose Dia: 25 mm | Length: 30 m | Pressure: 5–7 bar | Flow: 40 LPM"},
-  {n:"Fire Alarm Panel", c:"Fire Detection & Alarm", i:"🖥️", s:"Type: Addressable/Conventional | Zones: 8–64 | Backup: 24 hr battery"},
-  {n:"Smoke Detector", c:"Fire Detection & Alarm", i:"🔍", s:"Type: Optical/Ionization | Coverage: 60–80 m² | Voltage: 24V DC"},
-  {n:"Heat Detector", c:"Fire Detection & Alarm", i:"🌡️", s:"Type: Fixed/Rate-of-Rise | Trigger: 57–90°C | Coverage: 30–50 m²"},
-  {n:"Sprinkler", c:"Fire Fighting", i:"💦", s:"Type: Upright/Pendant | Bulb Temp: 68°C | K-Factor: 80 | Coverage: 12 m²"},
-  {n:"Landing Valve", c:"Fire Fighting", i:"🚰", s:"Size: 63 mm | Type: Single/Double Outlet | Rating: 16 bar"},
-  {n:"Fire Blanket", c:"Fire Fighting", i:"🧣", s:"Size: 1.2 x 1.2 m | Material: Fiberglass | Standard: IS 12943"},
-  {n:"Gas Detector", c:"Fire Detection & Alarm", i:"🧪", s:"Type: Fixed/Portable | Gas: LPG/CO/H2S | Range: 0–100% LEL"},
-  {n:"SCBA", c:"Breathing & Rescue", i:"🎒", s:"Cylinder: 6.8 L | Pressure: 300 bar | Duration: 30–45 min"},
-  {n:"EEBD", c:"Breathing & Rescue", i:"🥽", s:"Duration: 10–15 min | Type: Compressed Air/O2 | Weight: 2–3 kg"},
-  {n:"Safety Helmet", c:"PPE", i:"⛑️", s:"Material: HDPE | Standard: IS 2925 | Weight: 350–450 g"},
-  {n:"Safety Shoes", c:"PPE", i:"👢", s:"Toe: Steel/Composite | Standard: IS 15298 | Sole: Anti-slip"},
-  {n:"Safety Gloves", c:"PPE", i:"🧤", s:"Material: Nitrile/Leather/Cut-resistant | Standard: EN 388"},
-  {n:"Safety Goggles", c:"PPE", i:"🥽", s:"Lens: Polycarbonate | Standard: IS 5983 | Anti-fog coating"},
-  {n:"Face Shield", c:"PPE", i:"😷", s:"Material: Polycarbonate | Coverage: Full Face | Standard: IS 8521"},
-  {n:"Ear Plug", c:"PPE", i:"🦻", s:"NRR: 25–33 dB | Material: Foam/Silicone | Reusable/Disposable"},
-  {n:"Ear Muff", c:"PPE", i:"🎧", s:"NRR: 25–30 dB | Type: Over-ear | Adjustable Headband"},
-  {n:"Reflective Jacket", c:"PPE", i:"🦺", s:"Class: 2/3 | Material: Polyester Mesh | Standard: EN ISO 20471"},
-  {n:"Safety Harness", c:"PPE", i:"🪢", s:"Type: Full Body | Standard: IS 3521 | Capacity: 140 kg"},
-  {n:"General Work Permit", c:"Work Permits & Docs", i:"📋", s:"Validity: 8–24 hr | Format: Site Standard PTW"},
-  {n:"Hot Work Permit", c:"Work Permits & Docs", i:"🔥", s:"Validity: 8–12 hr | Requires: Fire Watch + Extinguisher"},
-  {n:"Height Work Permit", c:"Work Permits & Docs", i:"🪜", s:"Validity: 8–12 hr | Requires: Harness + Anchor Point"},
-  {n:"Confined Space Work Permit", c:"Work Permits & Docs", i:"⚠️", s:"Validity: 8 hr | Requires: Gas Test + Standby Person"},
-  {n:"Electrical Work Permit", c:"Work Permits & Docs", i:"⚡", s:"Validity: 8–12 hr | Requires: LOTO + Voltage Test"},
-  {n:"Lockout Tagout", c:"Work Permits & Docs", i:"🔒", s:"Devices: Padlock + Tag | Standard: OSHA 1910.147"},
-  {n:"Job Safety Analysis (JSA)", c:"Work Permits & Docs", i:"📝", s:"Format: Task-Hazard-Control | Review: Pre-task"},
-  {n:"Tool Box Talk (TBT)", c:"Work Permits & Docs", i:"🗣️", s:"Duration: 10–15 min | Frequency: Daily/Shift-wise"},
-  {n:"AHU", c:"HVAC & Mechanical", i:"❄️", s:"Airflow: 5,000–50,000 CMH | Motor: 3–30 kW | Filter: G4/F8"},
-  {n:"FCU", c:"HVAC & Mechanical", i:"🌬️", s:"Capacity: 0.5–5 TR | Airflow: 400–2000 CMH | Voltage: 230V"},
-  {n:"Chiller", c:"HVAC & Mechanical", i:"🧊", s:"Capacity: 50–500 TR | Type: Air/Water Cooled | Refrigerant: R134a"},
-  {n:"Cooling Tower", c:"HVAC & Mechanical", i:"🌫️", s:"Capacity: 50–500 TR | Type: Induced Draft | Material: FRP"},
-  {n:"DG Set", c:"Electrical Systems", i:"⚙️", s:"Capacity: 62.5–2000 kVA | Fuel: Diesel | Voltage: 415V"},
-  {n:"Transformer", c:"Electrical Systems", i:"🔌", s:"Capacity: 500–2500 kVA | Voltage: 11kV/433V | Cooling: ONAN"},
-  {n:"UPS", c:"Electrical Systems", i:"🔋", s:"Capacity: 10–500 kVA | Backup: 10–30 min | Type: Online"},
-  {n:"MCC Panel", c:"Electrical Systems", i:"🎛️", s:"Rating: 415V, 63–3200A | IP Rating: IP42/IP54"},
-  {n:"LT Panel", c:"Electrical Systems", i:"🎛️", s:"Rating: 415V, 800–4000A | Type: Fixed/Draw-out"},
-  {n:"Water Pump", c:"Plumbing & Pumps", i:"💧", s:"Flow: 50–500 LPM | Head: 20–100 m | Motor: 1–20 HP"},
-  {n:"Booster Pump", c:"Plumbing & Pumps", i:"💧", s:"Flow: 100–1000 LPM | Head: 30–120 m | Type: Multistage"},
-  {n:"STP", c:"Plumbing & Pumps", i:"🏭", s:"Capacity: 10–500 KLD | Process: SBR/MBBR | Output: Treated Water"},
-  {n:"WTP", c:"Plumbing & Pumps", i:"🏭", s:"Capacity: 10–1000 KLD | Process: RO/UF/Softener"},
-  {n:"Butterfly Valve", c:"Valves & Fittings", i:"🔩", s:"Size: 50–300 mm | Rating: PN10/PN16 | Body: Cast Iron"},
-  {n:"Gate Valve", c:"Valves & Fittings", i:"🔩", s:"Size: 15–300 mm | Rating: PN16 | Type: Rising/Non-rising Stem"},
-  {n:"Check Valve", c:"Valves & Fittings", i:"🔩", s:"Size: 15–300 mm | Type: Swing/Ball | Rating: PN16"},
-  {n:"Ball Valve", c:"Valves & Fittings", i:"🔩", s:"Size: 15–100 mm | Rating: PN16/PN25 | Body: Brass/SS"},
-  {n:"Male Coupling", c:"Valves & Fittings", i:"🔧", s:"Size: 63/50 mm | Type: Instantaneous | Material: Gunmetal"},
-  {n:"Female Coupling", c:"Valves & Fittings", i:"🔧", s:"Size: 63/50 mm | Type: Instantaneous | Material: Gunmetal"},
-  {n:"Pendant Sprinkler", c:"Fire Fighting", i:"💦", s:"Bulb Temp: 68°C | K-Factor: 80 | Orientation: Downward"},
-  {n:"Emergency Light", c:"Emergency Systems", i:"💡", s:"Backup: 90 min–3 hr | Lumens: 100–400 lm | Battery: SMF"},
-  {n:"Exit Sign", c:"Emergency Systems", i:"🚪", s:"Backup: 90 min | Type: LED Illuminated | Standard: IS 12349"},
-  {n:"First Aid Box", c:"Breathing & Rescue", i:"🩹", s:"Capacity: 10–50 person | Standard: IS 4083"},
-  {n:"Pressure Gauge", c:"Instrumentation", i:"📊", s:"Range: 0–16 bar | Dial: 100/150 mm | Connection: 1/2 in"},
-  {n:"Flow Switch", c:"Instrumentation", i:"📈", s:"Type: Paddle/Vane | Range: 20–200 LPM | Voltage: 24V/230V"},
-  {n:"Hydrant Valve", c:"Fire Fighting", i:"🚒", s:"Size: 63/80 mm | Type: Single/Double | Rating: 16 bar"},
-  {n:"Fire Pump", c:"Fire Fighting", i:"🚒", s:"Flow: 1,140–4,560 LPM | Head: 70–90 m | Type: Electric/Diesel"},
-  {n:"Jockey Pump", c:"Fire Fighting", i:"🚒", s:"Flow: 180 LPM | Head: 90 m | Purpose: Pressure Maintenance"},
-  {n:"Diesel Pump", c:"Fire Fighting", i:"🚒", s:"Flow: 2,280 LPM | Head: 90 m | Fuel: Diesel | Auto-start"}
+const CATS={"Fire Fighting":{color:"#e8483a",desc:"{n} is a critical firefighting asset used to control and suppress fire outbreaks in MEP-served buildings, forming part of the active fire protection system installed as per local fire codes.",purpose:"To provide immediate, accessible fire suppression capability that limits fire spread, protects occupants, and safeguards critical assets until the fire brigade arrives.",working:"Operates by delivering a suppressing agent (water, foam, CO2 or dry chemical) at controlled pressure directly onto the fire source, cooling, smothering or interrupting the combustion chain reaction.",apps:"Installed in fire hydrant systems, wet risers, plant rooms, corridors, basements and high-risk zones across commercial, industrial and residential buildings.",check:["Verify pressure gauge reading is in the green operating zone","Check for physical damage, corrosion or leakage on body and hose","Confirm safety pin, seal and tag are intact with valid inspection date","Ensure unobstructed access and correct signage at mounting location"],maint:["Conduct monthly visual inspection as per fire safety schedule","Perform annual servicing and hydrostatic pressure testing","Refill or recharge agent immediately after any use","Replace damaged hoses, nozzles or gauges without delay"],safe:["Never use on live electrical equipment unless rated for it","Always operate in a well-ventilated area to avoid inhalation","Stand upwind of the fire while discharging the agent","Undergo hands-on training before attempting live operation"]},"Fire Detection & Alarm":{color:"#ff7a3d",desc:"{n} is an electronic life-safety device that continuously monitors the protected area and triggers an alarm signal the moment abnormal fire or gas conditions are sensed.",purpose:"To provide early warning of fire, smoke, heat or gas hazards, giving occupants and response teams maximum time to evacuate and react.",working:"Uses a sensing element (optical, ionization, thermistor or electrochemical) that continuously samples ambient conditions and signals the fire alarm control panel once a preset threshold is crossed.",apps:"Installed in false ceilings, corridors, plant rooms, electrical rooms, kitchens and areas with fire or gas leak risk, networked to the central Fire Alarm Control Panel.",check:["Test functional response using approved test gas or smoke","Check LED indicator and communication with control panel","Inspect for dust, paint or physical obstruction on sensor","Verify device address and zone mapping in the panel database"],maint:["Clean sensing chamber as per manufacturer schedule","Conduct functional testing at defined periodic intervals","Calibrate sensitivity as per OEM and code requirements","Replace unit before end of rated service life"],safe:["Never paint over or cover the detector housing","Do not disable a zone without proper permit and notification","Report any false alarm trend to the safety team immediately","Keep detectors clear of steam, dust and direct airflow sources"]},"Breathing & Rescue":{color:"#3ea0e8",desc:"{n} is a personal life-safety device used to provide breathable air, wound care or emergency escape capability in hazardous or oxygen-deficient environments.",purpose:"To protect the respiratory system, treat injuries promptly, or enable safe evacuation and rescue work in hazardous atmospheres such as confined spaces or active fire zones.",working:"Supplies clean breathable air from a compressed cylinder or filtration hood through a regulator and mask, or provides immediate first-response treatment materials, isolating or treating the affected person.",apps:"Used in confined space entry, firefighting operations, chemical spill response, tank cleaning and as immediate emergency response equipment on site.",check:["Check cylinder pressure gauge or kit contents are within range","Inspect mask seal, straps and hose, or kit box for damage","Verify alarm whistle or expiry dates are within validity","Confirm unit is within hydrostatic test or restock validity"],maint:["Recharge, replace or restock consumables after every use","Sanitize components or wound care items after each use","Store in a clean, cool, dust-free designated location","Send for OEM servicing or restocking at prescribed intervals"],safe:["Complete a fit-test or first-aid drill before real use","Never enter a hazardous atmosphere without a trained standby person","Monitor supply or condition continuously during use","Exit or seek medical help immediately once alarm or symptoms appear"]},"PPE":{color:"#ffb020",desc:"{n} is personal protective equipment worn by workers to reduce exposure to workplace hazards and comply with mandatory site safety requirements.",purpose:"To protect the wearer from physical, chemical or environmental hazards encountered during routine and high-risk work activities.",working:"Acts as a physical barrier or absorbing layer between the hazard and the wearer's body, reducing the transmitted force, exposure or contact of the hazard.",apps:"Mandatory for use in construction sites, plant rooms, workshops, electrical work areas and any zone identified in the site risk assessment.",check:["Inspect for cracks, tears, wear or deformation before use","Confirm certification label and expiry or manufacture date","Check straps, buckles or fasteners are fully functional","Ensure correct size and fit for the individual wearer"],maint:["Clean and dry after each use as per manufacturer guidance","Store in a dedicated, contamination-free storage area","Replace immediately once damage or degradation is noticed","Retire and dispose of PPE at end of its rated life"],safe:["Never use damaged or expired PPE on any job","Always combine with other controls, not as sole protection","Follow correct donning and doffing sequence every time","Report discomfort or fitting issues to the safety officer"]},"Work Permits & Docs":{color:"#8b6de8",desc:"The {n} is a formal, documented safety control used to authorize, plan and supervise higher-risk work activities before they begin on site.",purpose:"To ensure hazards are identified, controls are implemented, and accountable persons formally authorize the work before it starts, reducing the risk of incidents.",working:"Requires the requesting team to identify the task, hazards and controls, obtain sign-off from an authorized issuer, and close out the document once work is verified complete and safe.",apps:"Used across construction, MEP and industrial sites for any activity classified as high-risk in the site permit-to-work and risk management procedure.",check:["Confirm hazard identification and control measures are documented","Verify all required signatures and validity period are in place","Check that isolation, PPE and equipment requirements are met","Ensure the area is inspected and found safe before work starts"],maint:["Review and update the document format as procedures change","File closed records per the document retention policy","Audit compliance through periodic site inspections","Retrain issuing authorities and users on procedure updates"],safe:["Never start work without a valid, signed document in hand","Stop work immediately if site conditions change unexpectedly","Ensure every worker understands the controls before starting","Verify the area is safe before formally closing out"]},"HVAC & Mechanical":{color:"#3ecf8e",desc:"{n} is a mechanical MEP asset responsible for conditioning, moving or supporting air and thermal loads within the building's HVAC system.",purpose:"To maintain the required indoor air quality, temperature and comfort conditions efficiently and reliably for building occupants and processes.",working:"Circulates air or refrigerant through coils, fans, compressors and filters, exchanging heat and controlling temperature and humidity as per the design setpoints.",apps:"Installed in plant rooms, ceiling voids, mechanical yards and central utility plants serving commercial, residential and industrial HVAC systems.",check:["Check running current, vibration and abnormal noise levels","Inspect filters, coils and belts for dirt or wear","Verify control settings and sensor readings against setpoints","Confirm no refrigerant, water or oil leakage is present"],maint:["Clean or replace filters as per the PM schedule","Lubricate bearings and check belt tension periodically","Carry out coil cleaning and condensate drain flushing","Perform annual OEM-recommended overhaul and testing"],safe:["Lock out and tag out power before any internal inspection","Allow rotating parts to fully stop before servicing","Use proper PPE when handling refrigerant or hot surfaces","Never bypass safety interlocks or pressure switches"]},"Electrical Systems":{color:"#f4c542",desc:"{n} is a critical electrical distribution or power backup asset that ensures a safe, stable and continuous power supply to the facility.",purpose:"To generate, convert, distribute or safeguard electrical power reliably while protecting downstream equipment and personnel from electrical hazards.",working:"Manages electrical energy through switching, transformation, generation or storage components, maintaining voltage, frequency and load balance within safe design limits.",apps:"Installed in electrical substations, switchrooms, plant rooms and main distribution boards serving critical and non-critical building loads.",check:["Check for abnormal heating, noise or unusual odor","Verify indicator lamps, meters and alarms are functioning","Inspect cable terminations and busbar connections for tightness","Confirm earthing and protective relay settings are correct"],maint:["Perform thermal scanning during scheduled PM rounds","Tighten and clean all electrical connections periodically","Test protective relays and breakers at defined intervals","Carry out insulation resistance testing as per schedule"],safe:["Always follow lockout-tagout before any electrical work","Use insulated tools and PPE rated for the working voltage","Never work alone on live or high-voltage electrical equipment","Confirm de-energization with a calibrated voltage tester first"]},"Plumbing & Pumps":{color:"#3daee8",desc:"{n} is a mechanical fluid-handling asset within the plumbing and water management system, moving or treating water for the facility's needs.",purpose:"To ensure reliable water supply, drainage or treatment, supporting domestic, flushing, irrigation or process water requirements of the building.",working:"Uses a motor-driven impeller, or a treatment process train, to move, pressurize or clean water as it passes through the connected piping network.",apps:"Installed in pump rooms, basements, terraces and utility yards supporting domestic water supply, drainage and effluent treatment systems.",check:["Check discharge pressure and flow rate against design values","Inspect for leakage at seals, glands and pipe joints","Verify motor current draw and bearing temperature are normal","Confirm control panel alarms and float switches operate correctly"],maint:["Grease bearings and check alignment as per PM schedule","Clean strainers, screens and suction lines periodically","Test standby and duty pump changeover operation monthly","Carry out annual overhaul as per OEM recommendations"],safe:["Isolate power before opening or servicing any pump","Never operate a pump against a fully closed valve","Use PPE when handling treatment chemicals or effluent","Ensure proper earthing of the pump motor before energizing"]},"Valves & Fittings":{color:"#b0b6bf",desc:"{n} is a piping component used to control, direct or connect the flow of water or fluid within the building's fire fighting or plumbing network.",purpose:"To regulate, isolate or connect fluid flow safely and reliably at the required points within the piping distribution system.",working:"Operates by rotating, lifting or connecting an internal mechanism to open, close, restrict or join the flow path within the pipeline.",apps:"Installed in fire fighting risers, plumbing distribution lines, pump rooms and hose connection points throughout the building network.",check:["Check for external leakage at the body and joints","Verify smooth operation through full open and close travel","Inspect gasket, thread or coupling condition for wear","Confirm correct orientation and flow direction marking"],maint:["Exercise the valve periodically to prevent seizing","Lubricate moving parts as per manufacturer guidance","Replace worn gaskets, seals or O-rings promptly","Repaint or protect exposed metal parts from corrosion"],safe:["Depressurize the line before dismantling any fitting","Never force a stuck valve with excessive tool leverage","Wear hand protection when handling sharp-edged fittings","Tag isolated valves clearly during maintenance work"]},"Emergency Systems":{color:"#ff6b6b",desc:"{n} is a life-safety egress asset that activates automatically during a power failure or emergency to guide occupants safely out of the building.",purpose:"To provide illumination and clear directional guidance along escape routes during a mains power failure or emergency evacuation.",working:"Switches automatically from mains supply to an internal battery backup the instant power is lost, keeping the lamp or sign illuminated for the rated duration.",apps:"Installed along corridors, stairwells, exits and assembly points as part of the building's mandatory emergency evacuation system.",check:["Test battery changeover by simulating a power failure","Check illumination brightness and coverage of the area","Inspect housing, lens and mounting for damage","Verify battery backup duration meets code requirement"],maint:["Conduct monthly function test and annual duration test","Replace battery at the end of its rated service life","Clean lens and housing to maintain light output","Log all test results in the fire safety register"],safe:["Never obstruct or paint over exit signage","Report a non-functional unit for immediate repair","Keep the escape route beneath it clear at all times","Verify visibility from all angles along the route"]},"Instrumentation":{color:"#c084fc",desc:"{n} is a monitoring instrument used to measure and indicate a critical operating parameter within the fire fighting or MEP piping system.",purpose:"To provide accurate, real-time indication of system conditions so operators can verify correct performance and detect abnormal conditions early.",working:"Senses the physical parameter (pressure or flow) through a mechanical or electronic sensing element and displays or signals the reading to the operator or control panel.",apps:"Installed on fire pump systems, risers, pump discharge lines and water distribution networks for continuous condition monitoring.",check:["Verify reading against a known reference or calibrated gauge","Check for physical damage, fogging or a sticking needle","Inspect isolation cock and connecting tubing for leaks","Confirm signal output to the control panel is accurate"],maint:["Calibrate at the manufacturer-recommended interval","Clean the dial face and connecting fittings periodically","Replace the unit if drift exceeds acceptable tolerance","Protect from vibration and pressure spikes where possible"],safe:["Isolate the line before removing or servicing the instrument","Never exceed the rated pressure or range of the device","Handle glass-faced gauges carefully to avoid breakage","Report inaccurate readings for immediate replacement"]}};
+
+const DATA=[
+{n:"Fire Extinguisher",c:"Fire Fighting",i:"🧯",s:"Capacity: 4–9 kg | Type: ABC / CO2 / Foam | Pressure: 15 bar | Range: 3–4 m"},
+{n:"Fire Hose Reel",c:"Fire Fighting",i:"🚿",s:"Hose Dia: 25 mm | Length: 30 m | Pressure: 5–7 bar | Flow: 40 LPM"},
+{n:"Fire Alarm Panel",c:"Fire Detection & Alarm",i:"🖥️",s:"Type: Addressable/Conventional | Zones: 8–64 | Backup: 24 hr battery"},
+{n:"Smoke Detector",c:"Fire Detection & Alarm",i:"🔍",s:"Type: Optical/Ionization | Coverage: 60–80 m² | Voltage: 24V DC"},
+{n:"Heat Detector",c:"Fire Detection & Alarm",i:"🌡️",s:"Type: Fixed/Rate-of-Rise | Trigger: 57–90°C | Coverage: 30–50 m²"},
+{n:"Sprinkler",c:"Fire Fighting",i:"💦",s:"Type: Upright/Pendant | Bulb Temp: 68°C | K-Factor: 80 | Coverage: 12 m²"},
+{n:"Landing Valve",c:"Fire Fighting",i:"🚰",s:"Size: 63 mm | Type: Single/Double Outlet | Rating: 16 bar"},
+{n:"Fire Blanket",c:"Fire Fighting",i:"🧣",s:"Size: 1.2 x 1.2 m | Material: Fiberglass | Standard: IS 12943"},
+{n:"Gas Detector",c:"Fire Detection & Alarm",i:"🧪",s:"Type: Fixed/Portable | Gas: LPG/CO/H2S | Range: 0–100% LEL"},
+{n:"SCBA",c:"Breathing & Rescue",i:"🎒",s:"Cylinder: 6.8 L | Pressure: 300 bar | Duration: 30–45 min"},
+{n:"EEBD",c:"Breathing & Rescue",i:"🥽",s:"Duration: 10–15 min | Type: Compressed Air/O2 | Weight: 2–3 kg"},
+{n:"Safety Helmet",c:"PPE",i:"⛑️",s:"Material: HDPE | Standard: IS 2925 | Weight: 350–450 g"},
+{n:"Safety Shoes",c:"PPE",i:"👢",s:"Toe: Steel/Composite | Standard: IS 15298 | Sole: Anti-slip"},
+{n:"Safety Gloves",c:"PPE",i:"🧤",s:"Material: Nitrile/Leather/Cut-resistant | Standard: EN 388"},
+{n:"Safety Goggles",c:"PPE",i:"🥽",s:"Lens: Polycarbonate | Standard: IS 5983 | Anti-fog coating"},
+{n:"Face Shield",c:"PPE",i:"😷",s:"Material: Polycarbonate | Coverage: Full Face | Standard: IS 8521"},
+{n:"Ear Plug",c:"PPE",i:"🦻",s:"NRR: 25–33 dB | Material: Foam/Silicone | Reusable/Disposable"},
+{n:"Ear Muff",c:"PPE",i:"🎧",s:"NRR: 25–30 dB | Type: Over-ear | Adjustable Headband"},
+{n:"Reflective Jacket",c:"PPE",i:"🦺",s:"Class: 2/3 | Material: Polyester Mesh | Standard: EN ISO 20471"},
+{n:"Safety Harness",c:"PPE",i:"🪢",s:"Type: Full Body | Standard: IS 3521 | Capacity: 140 kg"},
+{n:"General Work Permit",c:"Work Permits & Docs",i:"📋",s:"Validity: 8–24 hr | Format: Site Standard PTW"},
+{n:"Hot Work Permit",c:"Work Permits & Docs",i:"🔥",s:"Validity: 8–12 hr | Requires: Fire Watch + Extinguisher"},
+{n:"Height Work Permit",c:"Work Permits & Docs",i:"🪜",s:"Validity: 8–12 hr | Requires: Harness + Anchor Point"},
+{n:"Confined Space Permit",c:"Work Permits & Docs",i:"⚠️",s:"Validity: 8 hr | Requires: Gas Test + Standby Person"},
+{n:"Electrical Work Permit",c:"Work Permits & Docs",i:"⚡",s:"Validity: 8–12 hr | Requires: LOTO + Voltage Test"},
+{n:"Lockout Tagout",c:"Work Permits & Docs",i:"🔒",s:"Devices: Padlock + Tag | Standard: OSHA 1910.147"},
+{n:"Job Safety Analysis",c:"Work Permits & Docs",i:"📝",s:"Format: Task-Hazard-Control | Review: Pre-task"},
+{n:"Tool Box Talk",c:"Work Permits & Docs",i:"🗣️",s:"Duration: 10–15 min | Frequency: Daily/Shift-wise"},
+{n:"AHU",c:"HVAC & Mechanical",i:"❄️",s:"Airflow: 5,000–50,000 CMH | Motor: 3–30 kW | Filter: G4/F8"},
+{n:"FCU",c:"HVAC & Mechanical",i:"🌬️",s:"Capacity: 0.5–5 TR | Airflow: 400–2000 CMH | Voltage: 230V"},
+{n:"Chiller",c:"HVAC & Mechanical",i:"🧊",s:"Capacity: 50–500 TR | Type: Air/Water Cooled | Refrigerant: R134a"},
+{n:"Cooling Tower",c:"HVAC & Mechanical",i:"🌫️",s:"Capacity: 50–500 TR | Type: Induced Draft | Material: FRP"},
+{n:"DG Set",c:"Electrical Systems",i:"⚙️",s:"Capacity: 62.5–2000 kVA | Fuel: Diesel | Voltage: 415V"},
+{n:"Transformer",c:"Electrical Systems",i:"🔌",s:"Capacity: 500–2500 kVA | Voltage: 11kV/433V | Cooling: ONAN"},
+{n:"UPS",c:"Electrical Systems",i:"🔋",s:"Capacity: 10–500 kVA | Backup: 10–30 min | Type: Online"},
+{n:"MCC Panel",c:"Electrical Systems",i:"🎛️",s:"Rating: 415V, 63–3200A | IP Rating: IP42/IP54"},
+{n:"LT Panel",c:"Electrical Systems",i:"🎛️",s:"Rating: 415V, 800–4000A | Type: Fixed/Draw-out"},
+{n:"Water Pump",c:"Plumbing & Pumps",i:"💧",s:"Flow: 50–500 LPM | Head: 20–100 m | Motor: 1–20 HP"},
+{n:"Booster Pump",c:"Plumbing & Pumps",i:"💧",s:"Flow: 100–1000 LPM | Head: 30–120 m | Type: Multistage"},
+{n:"STP",c:"Plumbing & Pumps",i:"🏭",s:"Capacity: 10–500 KLD | Process: SBR/MBBR | Output: Treated Water"},
+{n:"WTP",c:"Plumbing & Pumps",i:"🏭",s:"Capacity: 10–1000 KLD | Process: RO/UF/Softener"},
+{n:"Butterfly Valve",c:"Valves & Fittings",i:"🔩",s:"Size: 50–300 mm | Rating: PN10/PN16 | Body: Cast Iron"},
+{n:"Gate Valve",c:"Valves & Fittings",i:"🔩",s:"Size: 15–300 mm | Rating: PN16 | Type: Rising/Non-rising Stem"},
+{n:"Check Valve",c:"Valves & Fittings",i:"🔩",s:"Size: 15–300 mm | Type: Swing/Ball | Rating: PN16"},
+{n:"Ball Valve",c:"Valves & Fittings",i:"🔩",s:"Size: 15–100 mm | Rating: PN16/PN25 | Body: Brass/SS"},
+{n:"Male Coupling",c:"Valves & Fittings",i:"🔧",s:"Size: 63/50 mm | Type: Instantaneous | Material: Gunmetal"},
+{n:"Female Coupling",c:"Valves & Fittings",i:"🔧",s:"Size: 63/50 mm | Type: Instantaneous | Material: Gunmetal"},
+{n:"Pendant Sprinkler",c:"Fire Fighting",i:"💦",s:"Bulb Temp: 68°C | K-Factor: 80 | Orientation: Downward"},
+{n:"Emergency Light",c:"Emergency Systems",i:"💡",s:"Backup: 90 min–3 hr | Lumens: 100–400 lm | Battery: SMF"},
+{n:"Exit Sign",c:"Emergency Systems",i:"🚪",s:"Backup: 90 min | Type: LED Illuminated | Standard: IS 12349"},
+{n:"First Aid Box",c:"Breathing & Rescue",i:"🩹",s:"Capacity: 10–50 person | Standard: IS 4083"},
+{n:"Pressure Gauge",c:"Instrumentation",i:"📊",s:"Range: 0–16 bar | Dial: 100/150 mm | Connection: 1/2 in"},
+{n:"Flow Switch",c:"Instrumentation",i:"📈",s:"Type: Paddle/Vane | Range: 20–200 LPM | Voltage: 24V/230V"},
+{n:"Hydrant Valve",c:"Fire Fighting",i:"🚒",s:"Size: 63/80 mm | Type: Single/Double | Rating: 16 bar"},
+{n:"Fire Pump",c:"Fire Fighting",i:"🚒",s:"Flow: 1,140–4,560 LPM | Head: 70–90 m | Type: Electric/Diesel"},
+{n:"Jockey Pump",c:"Fire Fighting",i:"🚒",s:"Flow: 180 LPM | Head: 90 m | Purpose: Pressure Maintenance"},
+{n:"Diesel Pump",c:"Fire Fighting",i:"🚒",s:"Flow: 2,280 LPM | Head: 90 m | Fuel: Diesel | Auto-start"}
 ];
- 
-/* ---------- Build full equipment objects ---------- */
-const EQUIP = DATA.map((d,idx)=>{
-  const t = CATS[d.c];
-  return {
-    id: idx,
-    name: d.n,
-    cat: d.c,
-    icon: d.i,
-    spec: d.s,
-    color: t.color,
-    desc: t.desc.replaceAll("{n}", d.n),
-    purpose: t.purpose,
-    working: t.working,
-    apps: t.apps,
-    check: t.check,
-    maint: t.maint,
-    safe: t.safe,
-    yt: "https://www.youtube.com/results?search_query=" + encodeURIComponent(d.n + " training maintenance safety")
-  };
-});
- 
-/* ---------- State ---------- */
-let currentCat = "All";
-let currentSearch = "";
- 
-/* ---------- Render category chips + select ---------- */
-function initFilters(){
-  const cats = ["All", ...Object.keys(CATS)];
-  const chipsWrap = document.getElementById("chips");
-  const select = document.getElementById("catSelect");
-  cats.forEach(c=>{
-    const count = c==="All" ? EQUIP.length : EQUIP.filter(e=>e.cat===c).length;
-    const chip = document.createElement("button");
-    chip.className = "chip" + (c==="All" ? " active" : "");
-    chip.textContent = c + " (" + count + ")";
-    chip.dataset.cat = c;
-    chip.addEventListener("click", ()=>{
-      currentCat = c;
-      document.querySelectorAll(".chip").forEach(el=>el.classList.remove("active"));
-      chip.classList.add("active");
-      select.value = c;
-      render();
-    });
-    chipsWrap.appendChild(chip);
- 
-    const opt = document.createElement("option");
-    opt.value = c; opt.textContent = c + " (" + count + ")";
-    select.appendChild(opt);
-  });
-  select.addEventListener("change", ()=>{
-    currentCat = select.value;
-    document.querySelectorAll(".chip").forEach(el=>{
-      el.classList.toggle("active", el.dataset.cat === currentCat);
-    });
-    render();
+
+/* Rooms with their default equipment names */
+const ROOMS=[
+{name:"Electrical Room",icon:"⚡",color:"#f4c542",desc:"Main LV/MV switchgear, transformers and UPS backup",match:["Transformer","UPS","MCC Panel","LT Panel"]},
+{name:"DG Room",icon:"⚙️",color:"#f0883e",desc:"Diesel generator, fuel system and auto-transfer switch",match:["DG Set"]},
+{name:"Chiller Plant",icon:"❄️",color:"#3ecf8e",desc:"Chillers, cooling towers and air handling units",match:["Chiller","Cooling Tower","AHU","FCU"]},
+{name:"Pump Room",icon:"💧",color:"#3ea0e8",desc:"Domestic water, fire pumps, booster sets",match:["Water Pump","Booster Pump","Fire Pump","Jockey Pump","Diesel Pump","Pressure Gauge","Flow Switch"]},
+{name:"STP Room",icon:"🏭",color:"#3daee8",desc:"Sewage treatment plant with SBR/MBBR process",match:["STP"]},
+{name:"WTP Room",icon:"💧",color:"#2eb88a",desc:"Water treatment, RO/UF filtration and softening",match:["WTP"]},
+{name:"PPE Store",icon:"🦺",color:"#ffb020",desc:"PPE, rescue gear and first aid supplies",match:["Safety Helmet","Safety Shoes","Safety Gloves","Safety Goggles","Face Shield","Ear Plug","Ear Muff","Reflective Jacket","Safety Harness","First Aid Box","SCBA","EEBD","Fire Blanket"]},
+{name:"Fire Fighting Zones",icon:"🧯",color:"#e8483a",desc:"Extinguishers, hoses, hydrants, sprinklers",match:["Fire Extinguisher","Fire Hose Reel","Sprinkler","Pendant Sprinkler","Landing Valve","Hydrant Valve"]},
+{name:"Detection & Alarm Room",icon:"🔍",color:"#ff7a3d",desc:"FACP, smoke, heat and gas detection network",match:["Fire Alarm Panel","Smoke Detector","Heat Detector","Gas Detector"]},
+{name:"Emergency Routes",icon:"🚪",color:"#ff6b6b",desc:"Emergency lighting and exit signage",match:["Emergency Light","Exit Sign"]},
+{name:"Valve Chambers",icon:"🔩",color:"#b0b6bf",desc:"Isolation and control valves across piping",match:["Butterfly Valve","Gate Valve","Check Valve","Ball Valve","Male Coupling","Female Coupling"]}
+];
+
+/* Build equipment objects */
+function getStatus(idx){const v=(idx*7+3)%10;if(v<7)return{label:"Active",cls:"active"};if(v<9)return{label:"Due Service",cls:"warning"};return{label:"Overdue",cls:"danger"};}
+const EQUIP=DATA.map((d,idx)=>{const t=CATS[d.c];return{id:idx,name:d.n,cat:d.c,icon:d.i,spec:d.s,color:t.color,status:getStatus(idx),desc:t.desc.replaceAll("{n}",d.n),purpose:t.purpose,working:t.working,apps:t.apps,check:t.check,maint:t.maint,safe:t.safe,yt:"https://www.youtube.com/results?search_query="+encodeURIComponent(d.n+" training maintenance safety")};});
+
+/* Dynamic room assignments: roomName -> Set of equip IDs */
+let roomAssignments={};
+function initRoomAssignments(){
+  roomAssignments={};
+  ROOMS.forEach(r=>{roomAssignments[r.name]=new Set();});
+  EQUIP.forEach(e=>{
+    for(const r of ROOMS){
+      if(r.match.includes(e.name)){roomAssignments[r.name].add(e.id);break;}
+    }
   });
 }
- 
-/* ---------- Card markup ---------- */
-function cardHTML(e, i){
-  return `
-  <div class="card" style="animation-delay:${Math.min(i*25,400)}ms" data-id="${e.id}">
-    <div class="thumb" style="background:linear-gradient(135deg, ${e.color}, #151515)">
-      <span class="tag">${e.cat}</span>
-      <span class="ico">${e.icon}</span>
-    </div>
-    <div class="card-body">
-      <h3>${e.name}</h3>
-      <div class="cat-line"><span class="cat-dot" style="background:${e.color}"></span>${e.cat}</div>
-      <p class="desc">${e.desc}</p>
-      <div class="spec-line mono">${e.spec}</div>
-      <div class="card-actions">
-        <button class="btn btn-primary" onclick="openModal(${e.id})">ℹ️ More Info</button>
-        <a class="btn btn-yt" href="${e.yt}" target="_blank" rel="noopener">▶ YouTube</a>
-      </div>
-    </div>
-  </div>`;
+initRoomAssignments();
+
+/* Get which room(s) an equipment belongs to */
+function getRoomsForEquip(eid){
+  const rooms=[];
+  for(const rn in roomAssignments){if(roomAssignments[rn].has(eid))rooms.push(rn);}
+  return rooms;
 }
- 
-/* ---------- Render grid ---------- */
-function render(){
-  const grid = document.getElementById("grid");
-  const q = currentSearch.trim().toLowerCase();
-  const filtered = EQUIP.filter(e=>{
-    const matchCat = currentCat==="All" || e.cat===currentCat;
-    const matchSearch = !q || e.name.toLowerCase().includes(q) || e.cat.toLowerCase().includes(q);
-    return matchCat && matchSearch;
+
+/* State */
+let currentView="dashboard",currentCat="All",currentSearch="",currentRoom="",isAdmin=false;
+
+/* Toast */
+function toast(msg,ico="✅"){const box=document.getElementById("toastBox");const el=document.createElement("div");el.className="toast";el.innerHTML=`<span>${ico}</span><span>${msg}</span>`;box.appendChild(el);setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),300);},2500);}
+
+/* Role */
+function toggleRole(){
+  isAdmin=!isAdmin;
+  document.getElementById("roleSwitch").classList.toggle("admin",isAdmin);
+  document.getElementById("roleLabel").textContent=isAdmin?"Admin":"Employee";
+  const badge=document.getElementById("roleBadge");
+  badge.textContent=isAdmin?"Admin":"Employee";
+  badge.className="role-badge "+(isAdmin?"admin":"employee");
+  toast(isAdmin?"Switched to Admin — you can add/remove equipment":"Switched to Employee — view only mode",isAdmin?"🔧":"👁️");
+  refreshCurrentView();
+}
+function refreshCurrentView(){
+  if(currentView==="dashboard")renderDashboard();
+  else if(currentView==="rooms")renderRooms();
+  else renderEquipment();
+}
+
+/* Sidebar */
+function initSidebar(){
+  const nav=document.getElementById("sidebarNav");
+  let h=`<button class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')"><span class="nav-ico">📊</span><span>Dashboard</span></button>
+  <button class="nav-item" data-view="equipment" onclick="switchView('equipment')"><span class="nav-ico">🔧</span><span>All Equipment</span><span class="nav-badge">${EQUIP.length}</span></button>
+  <button class="nav-item" data-view="rooms" onclick="switchView('rooms')"><span class="nav-ico">🏗️</span><span>Rooms & Areas</span><span class="nav-badge">${ROOMS.length}</span></button>
+  <div class="nav-section"><div class="nav-section-title">Rooms</div></div>`;
+  ROOMS.forEach(r=>{
+    const cnt=roomAssignments[r.name]?roomAssignments[r.name].size:0;
+    const needsAttn=EQUIP.filter(e=>roomAssignments[r.name]&&roomAssignments[r.name].has(e.id)&&e.status.cls!=="active").length;
+    h+=`<button class="nav-item" data-room="${r.name}" onclick="goToRoom('${r.name.replace(/'/g,"\\'")}')"><span class="cat-dot-sm" style="background:${r.color}"></span><span style="flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;">${r.name}</span><span class="nav-badge">${cnt}</span>${needsAttn?`<span class="nav-alert"></span>`:''}</button>`;
   });
-  document.getElementById("statsLine").innerHTML =
-    `Showing <b>${filtered.length}</b> of <b>${EQUIP.length}</b> equipment assets`;
- 
-  if(filtered.length===0){
-    grid.innerHTML = `<div class="empty"><span class="e-ico">🗂️</span>No equipment matches your search. Try a different keyword or category.</div>`;
-    return;
-  }
-  grid.innerHTML = filtered.map((e,i)=>cardHTML(e,i)).join("");
+  h+=`<div class="nav-section"><div class="nav-section-title">Categories</div></div>`;
+  Object.keys(CATS).forEach(c=>{
+    const cnt=EQUIP.filter(e=>e.cat===c).length;
+    h+=`<button class="nav-item" data-cat="${c}" onclick="filterByCat('${c.replace(/'/g,"\\'")}')"><span class="cat-dot-sm" style="background:${CATS[c].color}"></span><span style="flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;">${c}</span><span class="nav-badge">${cnt}</span></button>`;
+  });
+  nav.innerHTML=h;
 }
- 
-/* ---------- Modal ---------- */
-function ul(items){
-  return `<ul class="ul-list">${items.map(x=>`<li>${x}</li>`).join("")}</ul>`;
+
+function goToRoom(r){currentRoom=r;currentCat="All";switchView("equipment");}
+function filterByCat(c){currentCat=c;currentRoom="";switchView("equipment");}
+
+function switchView(v){
+  currentView=v;
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
+  document.getElementById(v==="dashboard"?"dashboardView":v==="rooms"?"roomsView":"equipmentView").classList.add("active");
+  document.getElementById("pageTitle").textContent=v==="dashboard"?"Dashboard":v==="rooms"?"Rooms & Areas":"Equipment Library";
+  document.querySelectorAll(".nav-item").forEach(n=>{
+    n.classList.remove("active");
+    if(v==="dashboard"&&n.dataset.view==="dashboard")n.classList.add("active");
+    if(v==="equipment"&&n.dataset.view==="equipment"&&!currentRoom)n.classList.add("active");
+    if(v==="rooms"&&n.dataset.view==="rooms")n.classList.add("active");
+    if(n.dataset.room===currentRoom&&v==="equipment")n.classList.add("active");
+  });
+  updateRoomFilterTag();
+  if(v==="dashboard")renderDashboard();
+  else if(v==="rooms")renderRooms();
+  else renderEquipment();
+  closeSidebar();
+  document.getElementById("content").scrollTop=0;
 }
-function openModal(id){
-  const e = EQUIP.find(x=>x.id===id);
-  if(!e) return;
-  const modal = document.getElementById("modal");
-  modal.innerHTML = `
-    <div class="modal-top"></div>
-    <div class="modal-head">
-      <div class="modal-ico" style="background:linear-gradient(135deg, ${e.color}, #151515)">${e.icon}</div>
-      <div>
-        <h2>${e.name}</h2>
-        <div class="cat-line"><span class="cat-dot" style="background:${e.color}"></span>${e.cat}</div>
-      </div>
-      <button class="close-btn" onclick="closeModal()">✕</button>
+function updateRoomFilterTag(){
+  const tag=document.getElementById("roomFilterTag");
+  if(currentRoom){const r=ROOMS.find(x=>x.name===currentRoom);tag.className="room-filter-tag show";tag.innerHTML=`${r?r.icon:''} ${currentRoom} <button onclick="clearRoomFilter()">✕</button>`;}
+  else{tag.className="room-filter-tag";}
+}
+function clearRoomFilter(){currentRoom="";if(currentView==="equipment")renderEquipment();updateRoomFilterTag();}
+
+/* ====== PICKER ====== */
+let pickerRoom="",pickerCat="All",pickerSearch="";
+function openPicker(roomName){
+  if(!isAdmin){toast("Only Admin can add/remove equipment","🔒");return;}
+  pickerRoom=roomName;pickerCat="All";pickerSearch="";
+  renderPicker();
+  document.getElementById("pickerOverlay").classList.add("open");
+}
+function closePicker(){document.getElementById("pickerOverlay").classList.remove("open");}
+document.getElementById("pickerOverlay").addEventListener("click",ev=>{if(ev.target.id==="pickerOverlay")closePicker();});
+document.addEventListener("keydown",ev=>{if(ev.key==="Escape"){closePicker();closeModal();}});
+
+function renderPicker(){
+  const room=ROOMS.find(r=>r.name===pickerRoom);
+  const assigned=roomAssignments[pickerRoom]||new Set();
+  const q=pickerSearch.toLowerCase();
+  const filtered=EQUIP.filter(e=>{
+    const mc=pickerCat==="All"||e.cat===pickerCat;
+    const ms=!q||e.name.toLowerCase().includes(q)||e.cat.toLowerCase().includes(q);
+    return mc&&ms;
+  });
+  const cats=["All",...Object.keys(CATS)];
+  document.getElementById("pickerPanel").innerHTML=`
+    <div class="picker-head">
+      <span style="font-size:20px;">${room?room.icon:''}</span>
+      <h3>${pickerRoom}</h3>
+      <button class="picker-close" onclick="closePicker()">✕</button>
     </div>
-    <div class="modal-body">
-      <div>
-        <p class="sec-label">Overview</p>
-        <p class="sec-text">${e.desc}</p>
-      </div>
-      <div class="two-col">
-        <div>
-          <p class="sec-label">Purpose</p>
-          <p class="sec-text">${e.purpose}</p>
-        </div>
-        <div>
-          <p class="sec-label">Working Principle</p>
-          <p class="sec-text">${e.working}</p>
-        </div>
-      </div>
-      <div>
-        <p class="sec-label">Applications</p>
-        <p class="sec-text">${e.apps}</p>
-      </div>
-      <div>
-        <p class="sec-label">Specifications</p>
-        <div class="spec-box mono">${e.spec}</div>
-      </div>
-      <div class="two-col">
-        <div>
-          <p class="sec-label">Inspection Checklist</p>
-          ${ul(e.check)}
-        </div>
-        <div>
-          <p class="sec-label">Preventive Maintenance</p>
-          ${ul(e.maint)}
-        </div>
-      </div>
-      <div>
-        <p class="sec-label">Safety Tips</p>
-        ${ul(e.safe)}
-      </div>
-    </div>
-    <div class="modal-foot">
-      <a class="btn btn-yt" style="flex:1" href="${e.yt}" target="_blank" rel="noopener">▶ Watch YouTube Training</a>
-    </div>
+    <div class="picker-search"><span class="ic">🔎</span><input type="text" placeholder="Search all equipment..." value="${pickerSearch}" oninput="pickerSearch=this.value;renderPicker()"></div>
+    <div class="picker-chips">${cats.map(c=>`<button class="chip${pickerCat===c?' active':''}" onclick="pickerCat='${c.replace(/'/g,"\\'")}';renderPicker()">${c}</button>`).join("")}</div>
+    <div class="picker-count">Showing <b>${filtered.length}</b> equipment · <b>${assigned.size}</b> in this room</div>
+    <div class="picker-list">${filtered.map(e=>{
+      const isAdded=assigned.has(e.id);
+      return`<div class="picker-item${isAdded?' added':''}">
+        <span class="picker-item-ico">${e.icon}</span>
+        <div class="picker-item-info"><div class="picker-item-name">${e.name}</div><div class="picker-item-cat">${e.cat} · ${e.spec.split('|')[0].trim()}</div></div>
+        <button class="picker-item-btn ${isAdded?'remove':'add'}" onclick="event.stopPropagation();toggleEquipInRoom(${e.id})">${isAdded?'✕ Remove':'+ Add'}</button>
+      </div>`;
+    }).join("")}</div>
   `;
-  document.getElementById("overlay").classList.add("open");
-  document.body.style.overflow = "hidden";
 }
-function closeModal(){
-  document.getElementById("overlay").classList.remove("open");
-  document.body.style.overflow = "";
+
+function toggleEquipInRoom(eid){
+  const assigned=roomAssignments[pickerRoom];
+  const e=EQUIP.find(x=>x.id===eid);
+  if(assigned.has(eid)){
+    assigned.delete(eid);
+    toast(`Removed ${e.name} from ${pickerRoom}`,"➖");
+  }else{
+    assigned.add(eid);
+    toast(`Added ${e.name} to ${pickerRoom}`,"➕");
+  }
+  renderPicker();
 }
-document.getElementById("overlay").addEventListener("click", (ev)=>{
-  if(ev.target.id === "overlay") closeModal();
-});
-document.addEventListener("keydown", (ev)=>{
-  if(ev.key === "Escape") closeModal();
-});
- 
-/* ---------- Search ---------- */
-document.getElementById("searchInput").addEventListener("input", (ev)=>{
-  currentSearch = ev.target.value;
-  render();
-});
- 
-/* ---------- Theme toggle ---------- */
-const themeBtn = document.getElementById("themeBtn");
-function setTheme(mode){
-  document.documentElement.setAttribute("data-theme", mode);
-  themeBtn.textContent = mode === "dark" ? "🌙" : "☀️";
+
+/* ====== DASHBOARD ====== */
+function renderDashboard(){
+  const total=EQUIP.length,cats=Object.keys(CATS).length;
+  const active=EQUIP.filter(e=>e.status.cls==="active").length;
+  const due=EQUIP.filter(e=>e.status.cls!=="active").length;
+  const comply=Math.round(active/total*100);
+  const catCounts=Object.keys(CATS).map(c=>({name:c,color:CATS[c].color,value:EQUIP.filter(e=>e.cat===c).length}));
+  const dueItems=EQUIP.filter(e=>e.status.cls!=="active").slice(0,5);
+  const maxC=Math.max(...catCounts.map(c=>c.value));
+
+  document.getElementById("dashboardView").innerHTML=`
+    <div class="dash-greeting"><h2>Operations Overview</h2><p>Real-time status of ${total} equipment across ${ROOMS.length} rooms</p></div>
+    <div class="stat-grid">
+      <div class="stat-card s1"><div class="stat-icon">🏗️</div><div class="stat-num" data-count="${total}">0</div><div class="stat-label">Total Equipment</div><div class="stat-sub"><span class="up">●</span> All tracked</div></div>
+      <div class="stat-card s2"><div class="stat-icon">📂</div><div class="stat-num" data-count="${cats}">0</div><div class="stat-label">Categories</div><div class="stat-sub"><span class="up">●</span> ${ROOMS.length} rooms</div></div>
+      <div class="stat-card s3"><div class="stat-icon">✅</div><div class="stat-num" data-count="${comply}" data-suffix="%">0</div><div class="stat-label">Compliance</div><div class="stat-sub"><span class="up">●</span> ${active} active</div></div>
+      <div class="stat-card s4"><div class="stat-icon">⚠️</div><div class="stat-num" data-count="${due}">0</div><div class="stat-label">Needs Attention</div><div class="stat-sub"><span class="dn">●</span> Service due</div></div>
+    </div>
+    <div class="quick-grid">
+      <button class="quick-btn" onclick="toast('Safety audit initiated for ${total} items','📋')"><div class="quick-btn-ico">📋</div><div class="quick-btn-title">Run Safety Audit</div><div class="quick-btn-desc">Check all equipment compliance</div></button>
+      <button class="quick-btn" onclick="toast('Maintenance scheduler opened for ${due} items','🔧')"><div class="quick-btn-ico">🔧</div><div class="quick-btn-title">Schedule Maintenance</div><div class="quick-btn-desc">Plan PM for due equipment</div></button>
+      <button class="quick-btn" onclick="toast('Generating equipment report...','📊')"><div class="quick-btn-ico">📊</div><div class="quick-btn-title">Export Report</div><div class="quick-btn-desc">Download full status report</div></button>
+      <button class="quick-btn" onclick="toast('Equipment registration opened','➕')"><div class="quick-btn-ico">➕</div><div class="quick-btn-title">Add Equipment</div><div class="quick-btn-desc">Register new asset</div></button>
+    </div>
+    <div class="dash-row">
+      <div class="dash-card"><div class="dash-card-title"><span class="dot"></span>By Category</div><div class="chart-area"><div class="chart-canvas-wrap"><canvas id="donutChart"></canvas></div><div class="chart-legend" id="chartLegend"></div></div></div>
+      <div class="dash-card"><div class="dash-card-title"><span class="dot"></span>Category Breakdown</div><div class="cat-quick-grid" id="catQuickGrid"></div></div>
+    </div>
+    <div class="dash-row">
+      <div class="dash-card"><div class="dash-card-title"><span class="dot" style="background:var(--orange)"></span>Needs Attention</div><div class="due-list">${dueItems.map(e=>{const rooms=getRoomsForEquip(e.id);return`<div class="due-item" onclick="openModal(${e.id})"><span class="due-ico">${e.icon}</span><div class="due-info"><div class="due-name">${e.name}</div><div class="due-cat">${rooms[0]||e.cat}</div></div><span class="status-badge ${e.status.cls}">${e.status.label}</span></div>`;}).join("")}</div></div>
+      <div class="dash-card"><div class="dash-card-title"><span class="dot" style="background:var(--green)"></span>Safety Reminders</div>
+        <div class="tips-list">
+          <div class="tip-item"><span class="tip-num">1</span><span>Verify LOTO before any maintenance on electrical or rotating equipment.</span></div>
+          <div class="tip-item"><span class="tip-num">2</span><span>Check fire extinguisher gauge monthly — green = ready, red = recharge.</span></div>
+          <div class="tip-item"><span class="tip-num">3</span><span>Confined space entry requires gas test + standby person.</span></div>
+          <div class="tip-item"><span class="tip-num">4</span><span>Never bypass safety interlocks on chillers or fire pumps.</span></div>
+          <div class="tip-item"><span class="tip-num">5</span><span>Ensure PPE is within certification date before hazardous zones.</span></div>
+        </div>
+      </div>
+    </div>`;
+  document.querySelectorAll(".stat-num[data-count]").forEach(el=>{const t=+el.dataset.count,suf=el.dataset.suffix||"";let c=0;const step=Math.max(1,Math.ceil(t/30));const iv=setInterval(()=>{c=Math.min(c+step,t);el.textContent=c+suf;if(c>=t)clearInterval(iv);},28);});
+  setTimeout(()=>drawDonut(catCounts),80);
+  document.getElementById("chartLegend").innerHTML=catCounts.map(c=>`<div class="legend-item"><span class="legend-dot" style="background:${c.color}"></span><span class="legend-name">${c.name}</span><span class="legend-val">${c.value}</span></div>`).join("");
+  document.getElementById("catQuickGrid").innerHTML=catCounts.map(c=>{const p=Math.round(c.value/maxC*100);return`<div class="cat-quick" onclick="filterByCat('${c.name.replace(/'/g,"\\'")}')"><div class="cat-quick-top"><span class="cat-quick-name">${c.name}</span><span class="cat-quick-count" style="color:${c.color}">${c.value}</span></div><div class="cat-quick-bar"><div class="cat-quick-fill" style="width:${p}%;background:${c.color}"></div></div></div>`;}).join("");
 }
-themeBtn.addEventListener("click", ()=>{
-  const cur = document.documentElement.getAttribute("data-theme");
-  setTheme(cur === "dark" ? "light" : "dark");
+
+function drawDonut(data){
+  const canvas=document.getElementById("donutChart");if(!canvas)return;
+  const ctx=canvas.getContext("2d"),dpr=window.devicePixelRatio||1,rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;ctx.scale(dpr,dpr);
+  const cx=rect.width/2,cy=rect.height/2,oR=Math.max(1,Math.min(cx,cy)-5),iR=Math.max(1,oR*.56),gap=.03,total=data.reduce((s,d)=>s+d.value,0);
+  if(!total)return;let prog=0;
+  const cs=getComputedStyle(document.documentElement),tc=cs.getPropertyValue("--text").trim(),mc=cs.getPropertyValue("--muted").trim();
+  (function frame(){
+    prog=Math.min(1,prog+.025);ctx.clearRect(0,0,rect.width,rect.height);
+    let a=-Math.PI/2;
+    data.forEach(d=>{const sw=(d.value/total)*Math.PI*2*prog-gap;if(sw>.001){ctx.beginPath();ctx.arc(cx,cy,oR,a,a+sw);ctx.arc(cx,cy,iR,a+sw,a,true);ctx.closePath();ctx.fillStyle=d.color;ctx.fill();}a+=(d.value/total)*Math.PI*2*prog;});
+    ctx.fillStyle=tc;ctx.font="700 26px Oswald";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(Math.round(total*prog),cx,cy-6);
+    ctx.font="500 8px Inter";ctx.fillStyle=mc;ctx.fillText("TOTAL ITEMS",cx,cy+11);
+    if(prog<1)requestAnimationFrame(frame);
+  })();
+}
+
+/* ====== ROOMS VIEW ====== */
+function renderRooms(){
+  document.getElementById("roomsView").innerHTML=`<div class="dash-greeting"><h2>Rooms & Areas</h2><p>Click + to add equipment (Admin only) · Hover icons to remove · Click icon for details</p></div><div class="rooms-grid" id="roomsGrid"></div>`;
+  const grid=document.getElementById("roomsGrid");
+  ROOMS.forEach((r,ri)=>{
+    const assigned=roomAssignments[r.name]?[...roomAssignments[r.name]]:[];
+    const items=assigned.map(id=>EQUIP.find(e=>e.id===id)).filter(Boolean);
+    const act=items.filter(e=>e.status.cls==="active").length;
+    const wrn=items.filter(e=>e.status.cls==="warning").length;
+    const ovr=items.filter(e=>e.status.cls==="danger").length;
+    const showItems=items.slice(0,7);
+    const more=items.length-showItems;
+    let statusHtml='';if(act)statusHtml+=`<div style="flex:${act};background:var(--green)"></div>`;if(wrn)statusHtml+=`<div style="flex:${wrn};background:var(--orange)"></div>`;if(ovr)statusHtml+=`<div style="flex:${ovr};background:var(--red)"></div>`;if(!items.length)statusHtml=`<div style="flex:1;background:var(--surface-3)"></div>`;
+    let statusText=[];if(act)statusText.push(`<span><span class="sd" style="background:var(--green)"></span>${act} Active</span>`);if(wrn)statusText.push(`<span><span class="sd" style="background:var(--orange)"></span>${wrn} Due</span>`);if(ovr)statusText.push(`<span><span class="sd" style="background:var(--red)"></span>${ovr} Overdue</span>`);
+
+    grid.innerHTML+=`<div class="room-card" style="--rc:${r.color};animation-delay:${ri*50}ms">
+      ${isAdmin?`<button class="room-add-btn" onclick="openPicker('${r.name.replace(/'/g,"\\'")}')">+</button>`:''}
+      <div class="room-card-head">
+        <div class="room-ico">${r.icon}</div>
+        <div style="flex:1;min-width:0;"><h3>${r.name}</h3><p>${r.desc}</p></div>
+        <span class="room-count-badge">${items.length}</span>
+      </div>
+      <div class="room-icons">${items.length?showItems.map(e=>`<span class="room-icon-tile" title="${e.name}" onclick="event.stopPropagation();openModal(${e.id})">${e.icon}${isAdmin?`<span class="remove-x" onclick="event.stopPropagation();removeFromRoom(${e.id},'${r.name.replace(/'/g,"\\'")}')">✕</span>`:''}</span>`).join("")+(more>0?`<span class="room-more">+${more}</span>`:''):`<span class="room-empty-msg">${isAdmin?'Click + to add equipment':'No equipment assigned'}</span>`}</div>
+      <div class="room-status-bar">${statusHtml}</div>
+      <div class="room-foot"><div class="room-status-text">${statusText.join('')}</div><button class="btn-sm" onclick="goToRoom('${r.name.replace(/'/g,"\\'")}')">View All →</button></div>
+    </div>`;
+  });
+}
+
+function removeFromRoom(eid,roomName){
+  if(!isAdmin)return;
+  const e=EQUIP.find(x=>x.id===eid);
+  roomAssignments[roomName].delete(eid);
+  toast(`Removed ${e.name} from ${roomName}`,"➖");
+  renderRooms();
+  initSidebar();
+}
+
+/* ====== EQUIPMENT VIEW ====== */
+function renderEquipment(){
+  const q=currentSearch.toLowerCase();
+  const filtered=EQUIP.filter(e=>{
+    const mc=currentCat==="All"||e.cat===currentCat;
+    const mr=!currentRoom||getRoomsForEquip(e.id).includes(currentRoom);
+    const ms=!q||e.name.toLowerCase().includes(q)||e.cat.toLowerCase().includes(q)||e.spec.toLowerCase().includes(q);
+    return mc&&mr&&ms;
+  });
+  const cats=["All",...Object.keys(CATS)];
+  let chipsHtml=cats.map(c=>{const cnt=c==="All"?EQUIP.length:EQUIP.filter(e=>e.cat===c).length;return`<button class="chip${currentCat===c?" active":""}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c} (${cnt})</button>`;}).join("");
+  let gridHtml;
+  if(!filtered.length)gridHtml=`<div class="empty"><span class="e-ico">🗂️</span>No equipment found.</div>`;
+  else gridHtml=filtered.map((e,i)=>{const rooms=getRoomsForEquip(e.id);return`<div class="card" style="animation-delay:${Math.min(i*20,400)}ms"><div class="thumb" style="background:linear-gradient(135deg,${e.color},#151515)"><span class="tag">${rooms[0]||e.cat}</span><span class="status-tag status-badge ${e.status.cls}">${e.status.label}</span><span class="ico">${e.icon}</span></div><div class="card-body"><h3>${e.name}</h3><div class="cat-line"><span class="cat-dot" style="background:${e.color}"></span>${e.cat}${rooms.length>1?` · +${rooms.length-1} rooms`:''}</div><p class="desc">${e.desc}</p><div class="spec-line mono">${e.spec}</div><div class="card-actions"><button class="btn btn-primary" onclick="openModal(${e.id})">ℹ️ Details</button><a class="btn btn-yt" href="${e.yt}" target="_blank" rel="noopener">▶ Video</a></div></div></div>`;}).join("");
+  document.getElementById("equipmentView").innerHTML=`<div class="chips-wrap">${chipsHtml}</div><div class="eq-stats">Showing <b>${filtered.length}</b> of <b>${EQUIP.length}</b> equipment</div><div class="grid">${gridHtml}</div>`;
+}
+function setCat(c){currentCat=c;renderEquipment();}
+
+/* ====== MODAL ====== */
+function ul(items){return`<ul class="ul-list">${items.map(x=>`<li>${x}</li>`).join("")}</ul>`;}
+function openModal(id){
+  const e=EQUIP.find(x=>x.id===id);if(!e)return;
+  const rooms=getRoomsForEquip(e.id);
+  document.getElementById("modal").innerHTML=`<div class="modal-top"></div><div class="modal-head"><div class="modal-ico" style="background:linear-gradient(135deg,${e.color},#151515)">${e.icon}</div><div><h2>${e.name}</h2><div class="cat-line"><span class="cat-dot" style="background:${e.color}"></span>${e.cat} · ${rooms.join(', ')||'Unassigned'} <span class="status-badge ${e.status.cls}" style="margin-left:5px;">${e.status.label}</span></div></div><button class="close-btn" onclick="closeModal()">✕</button></div><div class="modal-body"><div><p class="sec-label">Overview</p><p class="sec-text">${e.desc}</p></div><div class="two-col"><div><p class="sec-label">Purpose</p><p class="sec-text">${e.purpose}</p></div><div><p class="sec-label">Working Principle</p><p class="sec-text">${e.working}</p></div></div><div><p class="sec-label">Applications</p><p class="sec-text">${e.apps}</p></div><div><p class="sec-label">Specifications</p><div class="spec-box mono">${e.spec}</div></div><div class="two-col"><div><p class="sec-label">Inspection Checklist</p>${ul(e.check)}</div><div><p class="sec-label">Preventive Maintenance</p>${ul(e.maint)}</div></div><div><p class="sec-label">Safety Tips</p>${ul(e.safe)}</div></div><div class="modal-foot"><a class="btn btn-yt" style="flex:1" href="${e.yt}" target="_blank" rel="noopener">▶ Watch Training Video</a></div>`;
+  document.getElementById("overlay").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeModal(){document.getElementById("overlay").classList.remove("open");document.body.style.overflow="";}
+document.getElementById("overlay").addEventListener("click",ev=>{if(ev.target.id==="overlay")closeModal();});
+
+/* Search */
+document.getElementById("searchInput").addEventListener("input",ev=>{
+  currentSearch=ev.target.value;
+  if(currentView!=="equipment"){switchView("equipment");currentSearch=ev.target.value;renderEquipment();}
+  else renderEquipment();
 });
-const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-setTheme(prefersLight ? "light" : "dark");
- 
-/* ---------- Scroll to top ---------- */
-const toTop = document.getElementById("toTop");
-window.addEventListener("scroll", ()=>{
-  toTop.classList.toggle("show", window.scrollY > 420);
-});
-toTop.addEventListener("click", ()=>{
-  window.scrollTo({top:0, behavior:"smooth"});
-});
- 
-/* ---------- Init ---------- */
-initFilters();
-render();
+
+/* Theme */
+const themeBtn=document.getElementById("themeBtn");
+function setTheme(m){document.documentElement.setAttribute("data-theme",m);themeBtn.textContent=m==="dark"?"🌙":"☀️";if(currentView==="dashboard")setTimeout(()=>renderDashboard(),50);}
+themeBtn.addEventListener("click",()=>{setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");});
+setTheme(window.matchMedia&&window.matchMedia("(prefers-color-scheme:light)").matches?"light":"dark");
+
+/* Mobile sidebar */
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarBackdrop").classList.remove("show");}
+document.getElementById("menuToggle").addEventListener("click",()=>{document.getElementById("sidebar").classList.toggle("open");document.getElementById("sidebarBackdrop").classList.toggle("show");});
+document.getElementById("sidebarBackdrop").addEventListener("click",closeSidebar);
+
+/* Scroll to top */
+const toTop=document.getElementById("toTop");
+document.getElementById("content").addEventListener("scroll",()=>{toTop.classList.toggle("show",document.getElementById("content").scrollTop>300);});
+toTop.addEventListener("click",()=>{document.getElementById("content").scrollTo({top:0,behavior:"smooth"});});
+
+/* Init */
+initSidebar();renderDashboard();
 </script>
 </body>
 </html>
